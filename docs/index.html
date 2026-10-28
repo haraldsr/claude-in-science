@@ -1,0 +1,1465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude in Science Workshop</title>
+<meta name="description" content="Companion page for the CatTheory & CAMD half-day workshop on using Claude with computational research and Niflheim.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Red+Hat+Display:wght@500;700;800&family=Red+Hat+Text:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<style>
+/* Layout: full-bleed DTU-blue masthead holding the program, a sticky section rail,
+   then one reading column (~70ch) with wider panels for tables, the chart and code. */
+:root {
+  --bg: #ffffff;
+  --surface: #f3f4fc;
+  --surface-2: #e7e9f9;
+  --ink: #11142e;
+  --muted: #545a78;
+  --line: #dadded;
+  --accent: #2f3eea;
+  --accent-soft: #e5e8fd;
+  --on-accent: #ffffff;
+  --band: #2f3eea;
+  --band-ink: #ffffff;
+  --band-muted: #d3d8ff;
+  --band-card: rgba(255, 255, 255, 0.1);
+  --band-line: rgba(255, 255, 255, 0.28);
+  --chat: #b44a22;
+  --chat-soft: #f6e3da;
+  --code-bg: #12142a;
+  --code-ink: #e3e6ff;
+  --code-muted: #9298c6;
+  --code-accent: #a3abff;
+  --ok: #17784a;
+
+  --font-display: "Red Hat Display", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Red Hat Text", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.0625rem;
+  --step-2: 1.3125rem;
+  --step-3: 1.75rem;
+  --step-4: clamp(2rem, 1.4rem + 2.4vw, 2.6rem);
+  --step-hero: clamp(2.75rem, 1.6rem + 5.2vw, 5rem);
+
+  --radius: 10px;
+  --wrap: 1120px;
+  --read: 70ch;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0e1f;
+    --surface: #151833;
+    --surface-2: #1d2142;
+    --ink: #e8eaf8;
+    --muted: #a6abca;
+    --line: #2a2f55;
+    --accent: #8f99ff;
+    --accent-soft: #1e2452;
+    --on-accent: #0c0e1f;
+    --band: #1f28b3;
+    --band-ink: #ffffff;
+    --band-muted: #c7ccff;
+    --band-card: rgba(255, 255, 255, 0.08);
+    --band-line: rgba(255, 255, 255, 0.22);
+    --chat: #f2915f;
+    --chat-soft: #3a2219;
+    --code-bg: #07091a;
+    --code-ink: #e3e6ff;
+    --code-muted: #8f95c2;
+    --code-accent: #a3abff;
+    --ok: #5fd49a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c0e1f;
+  --surface: #151833;
+  --surface-2: #1d2142;
+  --ink: #e8eaf8;
+  --muted: #a6abca;
+  --line: #2a2f55;
+  --accent: #8f99ff;
+  --accent-soft: #1e2452;
+  --on-accent: #0c0e1f;
+  --band: #1f28b3;
+  --band-ink: #ffffff;
+  --band-muted: #c7ccff;
+  --band-card: rgba(255, 255, 255, 0.08);
+  --band-line: rgba(255, 255, 255, 0.22);
+  --chat: #f2915f;
+  --chat-soft: #3a2219;
+  --code-bg: #07091a;
+  --code-ink: #e3e6ff;
+  --code-muted: #8f95c2;
+  --code-accent: #a3abff;
+  --ok: #5fd49a;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-1);
+  line-height: 1.6;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: var(--bg);
+}
+img { max-width: 100%; height: auto; display: block; }
+[hidden] { display: none !important; }
+a { color: var(--accent); text-underline-offset: 0.18em; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code, kbd, pre { font-family: var(--font-mono); }
+:not(pre) > code, kbd {
+  font-size: 0.86em;
+  background: var(--surface-2);
+  padding: 0.08em 0.38em;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; }
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+ul, ol { margin: 0; padding-left: 1.2em; }
+li + li { margin-top: 0.3em; }
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (min-width: 720px) {
+  .wrap {
+    padding-left: max(32px, env(safe-area-inset-left, 0px));
+    padding-right: max(32px, env(safe-area-inset-right, 0px));
+  }
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- Masthead ---------- */
+.masthead {
+  background: var(--band);
+  color: var(--band-ink);
+}
+.masthead .wrap { padding-block: clamp(40px, 6vw, 72px) clamp(32px, 5vw, 56px); display: grid; gap: 28px; }
+.masthead .eyebrow { color: var(--band-muted); }
+.masthead h1 {
+  font-size: var(--step-hero);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.masthead .lead { font-size: var(--step-2); line-height: 1.45; max-width: 48ch; color: var(--band-ink); }
+.mast-row { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; }
+.laptop {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--band-ink); color: var(--band);
+  font-family: var(--font-display); font-weight: 700; font-size: var(--step-0);
+  padding: 10px 16px; border-radius: 999px; text-decoration: none;
+}
+.laptop svg { width: 22px; height: 22px; flex: none; }
+.laptop:hover { text-decoration: underline; }
+
+.program { display: grid; gap: 14px; margin-top: 8px; }
+.program-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.program-head h2 { font-size: var(--step-2); font-weight: 700; }
+.program-head span { color: var(--band-muted); font-size: var(--step--1); letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--font-display); font-weight: 700; }
+.talks { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.talk {
+  background: var(--band-card);
+  border: 1px solid var(--band-line);
+  border-radius: var(--radius);
+  padding: 18px 18px 16px;
+  display: grid; gap: 8px; align-content: start;
+  min-width: 0;
+}
+.talk .who { font-size: var(--step--1); color: var(--band-muted); font-weight: 500; }
+.talk h3 { font-size: var(--step-2); font-weight: 700; }
+.talk a { color: var(--band-ink); font-size: var(--step--1); font-weight: 500; }
+
+/* ---------- Section rail ---------- */
+.rail {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 5;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+.rail .wrap { padding-block: 0; }
+.rail-scroll { overflow-x: auto; scrollbar-width: none; }
+.rail-scroll::-webkit-scrollbar { display: none; }
+.rail ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 4px; white-space: nowrap; }
+.rail li + li { margin: 0; }
+.rail a {
+  display: block; padding: 12px 10px; font-size: var(--step--1); font-weight: 500;
+  color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent;
+}
+.rail a:hover { color: var(--ink); }
+.rail a[aria-current="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ---------- Sections ---------- */
+main { display: block; }
+.section { padding-block: clamp(48px, 7vw, 88px) 0; scroll-margin-top: 48px; }
+.section-head { display: grid; gap: 10px; max-width: var(--read); margin-bottom: 28px; }
+.section-head h2 { font-size: var(--step-4); font-weight: 800; letter-spacing: -0.01em; }
+.section-head p { color: var(--muted); }
+.sub { margin-top: 48px; display: grid; gap: 18px; }
+.sub > h3 { font-size: var(--step-3); font-weight: 700; }
+.sub > p, .prose { max-width: var(--read); }
+.divider { border: 0; border-top: 1px solid var(--line); margin: clamp(48px, 7vw, 88px) 0 0; }
+
+/* ---------- Setup steps ---------- */
+.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; counter-reset: step; }
+.steps > li { margin: 0; }
+.step {
+  display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px;
+  padding: 20px; background: var(--surface); border-radius: var(--radius);
+}
+.step-n {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--accent); color: var(--on-accent);
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: var(--step-0);
+}
+.step-body { display: grid; gap: 12px; min-width: 0; }
+.step-body h3 { font-size: var(--step-2); font-weight: 700; padding-top: 4px; }
+.step-body > p { max-width: var(--read); }
+@media (max-width: 520px) {
+  .step { grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 16px; }
+}
+
+/* ---------- Code blocks ---------- */
+.code {
+  background: var(--code-bg); color: var(--code-ink);
+  border-radius: var(--radius); overflow: hidden; min-width: 0;
+}
+.code-head {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 8px 10px 8px 16px; border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: var(--font-mono); font-size: 0.75rem; color: var(--code-muted);
+}
+.code pre {
+  margin: 0; padding: 14px 16px 16px; overflow-x: auto;
+  font-size: 0.875rem; line-height: 1.6; tab-size: 2;
+}
+.code pre .c { color: var(--code-muted); }
+.code pre .k { color: var(--code-accent); }
+.copy {
+  font: 600 0.75rem/1 var(--font-body);
+  color: var(--code-ink); background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.16); border-radius: 6px;
+  padding: 6px 10px; cursor: pointer;
+}
+.copy:hover { background: rgba(255,255,255,0.16); }
+
+.tabs { display: grid; gap: 0; min-width: 0; }
+.tablist { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.tablist button {
+  font: 500 var(--step--1)/1 var(--font-body);
+  color: var(--muted); background: transparent;
+  border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; cursor: pointer;
+}
+.tablist button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+.or { font-size: var(--step-0); color: var(--muted); }
+.pair { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.pair > * { min-width: 0; }
+.mini-label { font-size: var(--step--1); font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
+
+/* ---------- Exercises ---------- */
+.exercises { display: grid; gap: 20px; }
+.ex {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: clamp(18px, 3vw, 28px); display: grid; gap: 18px;
+  scroll-margin-top: 56px;
+}
+.ex.is-done { background: var(--surface); }
+.ex-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.ex-title { display: grid; gap: 6px; min-width: 0; }
+.ex-title .eyebrow { color: var(--accent); }
+.ex-title h3 { font-size: var(--step-3); font-weight: 700; }
+.done {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  font-size: var(--step--1); font-weight: 500; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px 6px 10px;
+  background: var(--bg);
+}
+.done input { width: 16px; height: 16px; accent-color: var(--ok); margin: 0; }
+.ex.is-done .done { color: var(--ok); border-color: var(--ok); }
+.ex-grid { display: grid; gap: 20px 32px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .ex-grid.has-aside { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+.ex-body { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.ex-body > p { max-width: var(--read); }
+.ex h4 { font-size: var(--step-0); font-weight: 700; font-family: var(--font-display); }
+.checklist { display: grid; gap: 8px; }
+
+.prompt {
+  margin: 0; background: var(--accent-soft); border-radius: var(--radius);
+  padding: 14px 16px; display: grid; gap: 8px; min-width: 0;
+}
+.prompt-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.prompt-head span { font-size: var(--step--1); font-weight: 700; color: var(--accent); letter-spacing: 0.06em; text-transform: uppercase; font-family: var(--font-display); }
+.prompt .copy { color: var(--accent); background: var(--bg); border-color: var(--line); }
+.prompt .copy:hover { background: var(--surface); }
+.prompt-text { font-family: var(--font-mono); font-size: 0.9rem; line-height: 1.6; white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.figure { margin: 0; display: grid; gap: 8px; min-width: 0; }
+.figure img { border-radius: 8px; border: 1px solid var(--line); background: #fff; }
+.figure figcaption { font-size: var(--step--1); color: var(--muted); }
+.ba { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; }
+.ba .arrow { color: var(--accent); width: 28px; height: 28px; }
+@media (max-width: 640px) {
+  .ba { grid-template-columns: minmax(0, 1fr); }
+  .ba .arrow { transform: rotate(90deg); justify-self: center; }
+}
+.ba .figure img { width: 100%; }
+
+/* ---------- Tables ---------- */
+.table-scroll { overflow-x: auto; min-width: 0; border-top: 1px solid var(--line); }
+table { border-collapse: collapse; width: 100%; font-size: var(--step-0); }
+th, td { text-align: left; vertical-align: top; padding: 12px 14px 12px 0; border-bottom: 1px solid var(--line); }
+th { font-family: var(--font-display); font-size: var(--step--1); font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+td small { display: block; color: var(--muted); font-size: var(--step--1); margin-top: 2px; }
+td .eg { display: block; color: var(--accent); font-size: var(--step--1); margin-top: 4px; }
+.num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.num.chat { color: var(--chat); }
+.num.cc { color: var(--accent); }
+
+/* ---------- Chart ---------- */
+.chart-card { background: var(--surface); border-radius: var(--radius); padding: clamp(16px, 3vw, 24px); display: grid; gap: 14px; min-width: 0; }
+.chart-card h4 { font-size: var(--step-2); font-weight: 700; font-family: var(--font-display); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: var(--step--1); color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 8px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend .l-chat { background: var(--chat); }
+.legend .l-cc { background: var(--accent); }
+.legend .l-lim { width: 18px; height: 0; border-top: 2px dashed var(--muted); border-radius: 0; }
+.chart-scroll { overflow-x: auto; }
+.chart-scroll svg { width: 100%; min-width: 520px; height: auto; display: block; }
+.chart-card .note { font-size: var(--step--1); color: var(--muted); max-width: var(--read); }
+svg .grid { stroke: var(--line); stroke-width: 1; }
+svg .axis-t { fill: var(--muted); font: 500 12px var(--font-body); }
+svg .x-t { fill: var(--ink); font: 500 12.5px var(--font-body); }
+svg .x-s { fill: var(--muted); font: 400 11.5px var(--font-body); }
+svg .bar-chat { fill: var(--chat); }
+svg .bar-cc { fill: var(--accent); }
+svg .ghost { fill: none; stroke: var(--chat); stroke-width: 1.5; stroke-dasharray: 4 3; }
+svg .limit { stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 6 4; }
+svg .v-chat { fill: var(--chat); font: 700 12px var(--font-body); }
+svg .v-cc { fill: var(--accent); font: 700 12px var(--font-body); }
+svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
+
+/* ---------- Flow (sessions) ---------- */
+.flows { display: grid; gap: 22px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .flows { grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); align-items: start; } }
+.flow-col { display: grid; gap: 22px; min-width: 0; }
+.flow { display: grid; gap: 10px; }
+.flow h4 { font-size: var(--step-1); font-weight: 700; font-family: var(--font-display); }
+.flow-row { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; }
+.flow-row .sep { align-self: center; color: var(--muted); font-size: 1.1rem; }
+.box { background: var(--surface); border-radius: 8px; padding: 12px; font-size: var(--step--1); display: grid; gap: 4px; align-content: start; min-width: 0; }
+.box b { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 400; color: var(--muted); }
+@media (max-width: 640px) {
+  .flow-row { grid-template-columns: minmax(0, 1fr); }
+  .flow-row .sep { transform: rotate(90deg); justify-self: center; }
+}
+.flow .foot { font-size: var(--step--1); color: var(--muted); }
+.ondisk { background: var(--accent); color: var(--on-accent); border-radius: 8px; padding: 10px 12px; font-size: var(--step--1); overflow-wrap: anywhere; }
+.ondisk code { background: transparent; color: inherit; padding: 0; white-space: normal; }
+
+/* ---------- Models ---------- */
+.dials { display: grid; gap: 28px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .dials { grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); } }
+.dial { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.dial h4 { font-size: var(--step-2); font-weight: 700; font-family: var(--font-display); }
+.dial > p { color: var(--muted); font-size: var(--step-0); }
+.models { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.model { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.model-name { font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); }
+.model-name small { display: block; font-family: var(--font-body); font-weight: 400; color: var(--muted); font-size: var(--step--1); }
+.model p { font-size: var(--step-0); }
+.model .eg { display: block; color: var(--accent); font-size: var(--step--1); margin-top: 4px; }
+.effort { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; }
+.effort div { display: grid; gap: 6px; align-content: start; }
+.effort b {
+  display: block; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600;
+  padding: 8px 8px; border-radius: 4px; color: var(--ink);
+}
+.effort div:nth-child(1) b { background: color-mix(in srgb, var(--accent) 14%, var(--bg)); }
+.effort div:nth-child(2) b { background: color-mix(in srgb, var(--accent) 30%, var(--bg)); }
+.effort div:nth-child(3) b { background: color-mix(in srgb, var(--accent) 52%, var(--bg)); }
+.effort div:nth-child(4) b { background: color-mix(in srgb, var(--accent) 82%, var(--bg)); color: var(--on-accent); }
+.effort div:nth-child(5) b { background: var(--accent); color: var(--on-accent); }
+.effort span { font-size: 0.78rem; color: var(--muted); line-height: 1.35; }
+@media (max-width: 520px) {
+  .effort { grid-template-columns: minmax(0, 1fr); }
+  .effort div { grid-template-columns: 76px minmax(0, 1fr); align-items: center; }
+}
+.panel { background: var(--surface); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 8px; font-size: var(--step-0); }
+.panel h5 { font-family: var(--font-display); font-size: var(--step-0); font-weight: 700; margin: 0; }
+.panel ul { display: grid; gap: 2px; }
+.panel .muted { color: var(--muted); font-size: var(--step--1); }
+.callout {
+  background: var(--accent); color: var(--on-accent); border-radius: var(--radius);
+  padding: 14px 18px; font-size: var(--step-0);
+}
+.callout b { font-family: var(--font-display); }
+
+.diag { display: grid; gap: 12px; }
+.diag-split { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.diag-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 6px; align-content: start; font-size: var(--step-0); min-width: 0; }
+.diag-card .eyebrow { font-size: 0.72rem; }
+.diag-card h5 { font-family: var(--font-display); font-size: var(--step-2); font-weight: 700; margin: 0; color: var(--accent); }
+.diag-card .eg { color: var(--accent); font-size: var(--step--1); }
+.down { font-size: var(--step--1); color: var(--accent); font-weight: 500; }
+
+.two { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 960px) { .two { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: start; } }
+.two > * { min-width: 0; }
+.stack { display: grid; gap: 14px; align-content: start; }
+
+/* ---------- Niflheim ---------- */
+.facts { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.fact { background: var(--surface); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 6px; align-content: start; font-size: var(--step-0); }
+.fact h4 { font-family: var(--font-display); font-size: var(--step-1); font-weight: 700; }
+td code, td .mono { font-family: var(--font-mono); font-size: 0.84rem; }
+
+/* ---------- Cheat sheet ---------- */
+.cheats { display: grid; gap: 32px 40px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .cheats { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.cheat-col { display: grid; gap: 32px; align-content: start; min-width: 0; }
+.cheat { display: grid; gap: 4px; align-content: start; min-width: 0; }
+.cheat h3 { font-size: var(--step-2); font-weight: 700; margin-bottom: 8px; }
+.cheat dl { margin: 0; display: grid; grid-template-columns: fit-content(55%) minmax(0, 1fr); gap: 0 20px; border-top: 1px solid var(--line); }
+.cheat dt, .cheat dd { padding: 9px 0; border-bottom: 1px solid var(--line); margin: 0; font-size: var(--step-0); }
+.cheat dt { font-family: var(--font-mono); font-size: 0.84rem; color: var(--accent); font-weight: 600; overflow-wrap: anywhere; }
+.cheat dd { color: var(--ink); }
+
+/* ---------- Links ---------- */
+.links { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.links h3 { font-size: var(--step-1); font-weight: 700; margin-bottom: 10px; }
+.links ul { list-style: none; padding: 0; display: grid; gap: 8px; }
+.links li { margin: 0; font-size: var(--step-0); }
+.links li small { display: block; color: var(--muted); font-size: var(--step--1); }
+
+footer { margin-top: clamp(64px, 8vw, 104px); border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--muted); font-size: var(--step--1); }
+
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 999px;
+  font-size: var(--step--1); font-weight: 500; z-index: 20;
+}
+</style>
+</head>
+<body>
+<header class="masthead" id="top">
+  <div class="wrap">
+    <p class="eyebrow">CatTheory &amp; CAMD · DTU Physics · Half-day workshop</p>
+    <h1>Claude in Science</h1>
+    <p class="lead">An interactive session on using Claude with our computational research, and in particular with Niflheim. Keep this page open while you work: it has the setup, the exercises and the reference material from the talks.</p>
+    <div class="mast-row">
+      <a class="laptop" href="#setup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg>
+        Bring your laptop with Claude
+      </a>
+    </div>
+
+    <section class="program" id="program" aria-labelledby="program-h">
+      <div class="program-head">
+        <h2 id="program-h">Program</h2>
+        <span>Tentative</span>
+      </div>
+      <div class="talks">
+        <article class="talk">
+          <p class="who">Harald Skat-Rørdam</p>
+          <h3>Optimising Claude &amp; token use for programming</h3>
+          <a href="#context">Goes with: Context, Models &amp; effort, Sessions, Skills</a>
+        </article>
+        <article class="talk">
+          <p class="who">Leo Karlsson</p>
+          <h3>Running your first simulations on Niflheim with Claude</h3>
+          <a href="#niflheim">Goes with: Niflheim</a>
+        </article>
+        <article class="talk">
+          <p class="who">Karsten Wedel Jacobsen</p>
+          <h3>Programming with Claude and marimo notebooks</h3>
+          <a href="#marimo">Goes with: marimo</a>
+        </article>
+      </div>
+    </section>
+  </div>
+</header>
+
+<nav class="rail" aria-label="Sections">
+  <div class="wrap">
+    <div class="rail-scroll">
+      <ul>
+        <li><a href="#setup">Setup</a></li>
+        <li><a href="#exercises">Exercises</a></li>
+        <li><a href="#context">Context</a></li>
+        <li><a href="#models">Models &amp; effort</a></li>
+        <li><a href="#sessions">Sessions</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#niflheim">Niflheim</a></li>
+        <li><a href="#marimo">marimo</a></li>
+        <li><a href="#cheatsheet">Cheat sheet</a></li>
+        <li><a href="#links">Links</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+
+  <!-- ================= SETUP ================= -->
+  <section class="section" id="setup" aria-labelledby="setup-h">
+    <div class="section-head">
+      <p class="eyebrow">Before you start</p>
+      <h2 id="setup-h">Setup</h2>
+      <p>Do this before the workshop if you can, so the session can go to the exercises.</p>
+    </div>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="step-n" aria-hidden="true">1</span>
+        <div class="step-body">
+          <h3>Install Claude Code</h3>
+          <p>Open a terminal and run the command for your system. Then open a new terminal and check it with <code>claude --version</code>. You need a Claude subscription or an Anthropic Console account; Claude Code asks you to log in the first time you start it.</p>
+          <div class="tabs" data-tabs>
+            <div class="tablist" role="tablist" aria-label="Operating system">
+              <button type="button" role="tab" id="tab-unix" aria-controls="panel-unix" aria-selected="true">macOS · Linux · WSL</button>
+              <button type="button" role="tab" id="tab-ps" aria-controls="panel-ps" aria-selected="false" tabindex="-1">Windows PowerShell</button>
+              <button type="button" role="tab" id="tab-brew" aria-controls="panel-brew" aria-selected="false" tabindex="-1">Homebrew</button>
+            </div>
+            <div class="code" role="tabpanel" id="panel-unix" aria-labelledby="tab-unix">
+              <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+            </div>
+            <div class="code" role="tabpanel" id="panel-ps" aria-labelledby="tab-ps" hidden>
+              <div class="code-head"><span>powershell</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <pre><code>irm https://claude.ai/install.ps1 | iex</code></pre>
+            </div>
+            <div class="code" role="tabpanel" id="panel-brew" aria-labelledby="tab-brew" hidden>
+              <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <pre><code>brew install --cask claude-code</code></pre>
+            </div>
+          </div>
+          <p class="or">Prefer an app? The Claude desktop app includes Claude Code in its Code tab. See the <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">Claude Code docs</a> for all options and install troubleshooting.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">2</span>
+        <div class="step-body">
+          <h3>Get the workshop harness</h3>
+          <p>The harness is the set of Claude files we prepared for the workshop. It comes as four bundles; for the workshop use <code>hands-on/niflheim</code>. Get it from either place and copy the bundle's contents into your working root, the folder you start <code>claude</code> from.</p>
+          <div class="pair">
+            <div>
+              <span class="mini-label">From GitLab · <a href="https://gitlab.gbar.dtu.dk/cattheory/software/cattheory_tutorials/-/tree/main/Agentic_coding" target="_blank" rel="noopener">Agentic_coding</a></span>
+              <div class="code">
+                <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+                <pre><code>git clone https://gitlab.gbar.dtu.dk/cattheory/software/cattheory_tutorials.git
+mkdir -p ~/my-project
+cp -R cattheory_tutorials/Agentic_coding/hands-on/niflheim/. ~/my-project/</code></pre>
+              </div>
+            </div>
+            <div>
+              <span class="mini-label">On Niflheim · Harald's directory</span>
+              <div class="code">
+                <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+                <pre><code>mkdir -p ~/my-project
+cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
+              </div>
+            </div>
+          </div>
+          <p class="or">Replace <code>~/my-project/</code> with a new, empty working root: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Working only on your laptop? Use <code>hands-on/generic</code>. Adding it to an existing project? Follow Install in the <a href="https://gitlab.gbar.dtu.dk/cattheory/software/cattheory_tutorials/-/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">3</span>
+        <div class="step-body">
+          <h3>Check that Claude sees it</h3>
+          <p>Run the hook test first. The hooks need <code>jq</code> on your PATH; without it they refuse every tool call.</p>
+          <div class="code">
+            <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <pre><code>cd ~/my-project &amp;&amp; bash .claude/hooks/test_hooks.sh</code></pre>
+          </div>
+          <p>Every line should say PASS. Then start <code>claude</code> and run <code>/context</code>: the harness's <code>CLAUDE.md</code> should be listed among the files loaded into context. Your first task runs <code>/setup</code>, which maps out the project; until it finishes, Claude will not edit source files.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">4</span>
+        <div class="step-body">
+          <h3>Make sure you can reach Niflheim</h3>
+          <p>SSH to Niflheim only works from the DTU network. Off campus, connect to the DTU VPN first. Pick the login node that matches the partition you will use (<a href="#niflheim">table below</a>).</p>
+          <div class="code">
+            <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <pre><code>ssh username@svol.fysik.dtu.dk</code></pre>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ================= EXERCISES ================= -->
+  <section class="section" id="exercises" aria-labelledby="ex-h">
+    <div class="section-head">
+      <p class="eyebrow">Hands-on</p>
+      <h2 id="ex-h">Exercises</h2>
+      <p>Start with exercise 1; it shows why everything after it works the way it does. Exercises 2 to 5 are bigger, so pick the ones closest to your own work. Ticking an exercise off is saved in this browser only.</p>
+    </div>
+
+    <div class="exercises">
+
+      <article class="ex" id="ex1" data-ex="ex1">
+        <div class="ex-top">
+          <div class="ex-title">
+            <p class="eyebrow">Exercise 1</p>
+            <h3>Why context is important</h3>
+          </div>
+          <label class="done"><input type="checkbox" id="done-ex1" data-done="ex1"> Done</label>
+        </div>
+        <div class="ex-grid has-aside">
+          <div class="ex-body">
+            <p>Run the same prompt twice: once in an empty folder, and once in your working root with the harness. Then compare and contrast the outputs.</p>
+            <figure class="prompt">
+              <div class="prompt-head"><span>Prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <p class="prompt-text">Make an fcc111 copper slab and relax it using a cheap calculator</p>
+            </figure>
+          </div>
+          <div class="ex-body">
+            <h4>Things to compare</h4>
+            <ul class="checklist">
+              <li>Which calculator it picked, and whether it said why</li>
+              <li>Slab size, vacuum and fixed layers</li>
+              <li>Where the files ended up, and how they are named</li>
+              <li>Whether it ran the job locally or submitted it</li>
+              <li>How full the context is afterwards (<code>/context</code>)</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="ex" id="ex2" data-ex="ex2">
+        <div class="ex-top">
+          <div class="ex-title">
+            <p class="eyebrow">Exercise 2</p>
+            <h3>Recreate an HER volcano</h3>
+          </div>
+          <label class="done"><input type="checkbox" id="done-ex2" data-done="ex2"> Done</label>
+        </div>
+        <div class="ex-grid has-aside">
+          <div class="ex-body">
+            <ul class="checklist">
+              <li>Use a cheap calculator: EMT, or GPAW in LCAO mode.</li>
+              <li>Try to also submit jobs on Niflheim (not too many!).</li>
+              <li>Be specific to Claude that you want the calculations redone, not values scraped from the image.</li>
+            </ul>
+            <figure class="prompt">
+              <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <p class="prompt-text">Recreate the HER volcano from Nørskov et al., J. Electrochem. Soc. 152, J23 (2005) by running the calculations yourself. Do not read values off the figure. Use EMT on fcc(111) slabs of Cu, Ag, Au, Ni, Pd and Pt, compute the hydrogen adsorption energy, convert it to ΔG_H*, and plot it against the experimental exchange currents from the paper. Submit at most 10 jobs to Niflheim. Make a plan first.</p>
+            </figure>
+            <h4>Hints</h4>
+            <ul class="checklist">
+              <li>EMT only covers Al, Cu, Ag, Au, Ni, Pd and Pt; H is supported but <a href="https://docs.ase-lib.org/ase/calculators/emt.html" target="_blank" rel="noopener">not well described</a>. Expect a rough volcano, then try <a href="https://gpaw.readthedocs.io/documentation/lcao/lcao.html" target="_blank" rel="noopener">GPAW LCAO</a> for a better one.</li>
+              <li>The paper uses ΔG_H* = ΔE_H + 0.24 eV.</li>
+              <li>This touches several files and jobs, so use plan mode (<kbd>Shift</kbd>+<kbd>Tab</kbd>).</li>
+            </ul>
+          </div>
+          <figure class="figure">
+            <img src="img/volcano.webp" alt="Volcano diagram of the HER for various metals: log exchange current against hydrogen adsorption free energy, with Pt, Pd and Rh near the top." width="498" height="401">
+            <figcaption>Target: HER volcano from <a href="https://doi.org/10.1149/1.1856988" target="_blank" rel="noopener">Nørskov et al., J. Electrochem. Soc. 152, J23 (2005)</a>.</figcaption>
+          </figure>
+        </div>
+      </article>
+
+      <article class="ex" id="ex3" data-ex="ex3">
+        <div class="ex-top">
+          <div class="ex-title">
+            <p class="eyebrow">Exercise 3</p>
+            <h3>Turn an old plot into an interactive one</h3>
+          </div>
+          <label class="done"><input type="checkbox" id="done-ex3" data-done="ex3"> Done</label>
+        </div>
+        <div class="ex-body">
+          <p>Find an old plot and make it an interactive Plotly figure, or vibe code a small website for it. Give Claude the data or the script that made the plot, not a screenshot.</p>
+          <div class="ba">
+            <figure class="figure">
+              <img src="img/plot_before.webp" alt="Static matplotlib scatter of ΔE_CO* against ΔE_H* with labelled metals." width="596" height="528">
+              <figcaption>Before: static scatter of ΔE<sub>CO*</sub> vs ΔE<sub>H*</sub></figcaption>
+            </figure>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <figure class="figure">
+              <img src="img/plot_after.webp" alt="Interactive Plotly version of the same scatter with a hover box showing one material's details." width="900" height="754">
+              <figcaption>After: interactive Plotly, hover shows each material</figcaption>
+            </figure>
+          </div>
+          <figure class="prompt">
+            <div class="prompt-head"><span>Example prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <p class="prompt-text">Here is the script and data behind an old figure of mine. Rebuild it as an interactive Plotly figure saved as a single HTML file. Keep the axes and labels, and show the material name, ID and energies on hover.</p>
+          </figure>
+        </div>
+      </article>
+
+      <article class="ex" id="ex4" data-ex="ex4">
+        <div class="ex-top">
+          <div class="ex-title">
+            <p class="eyebrow">Exercise 4</p>
+            <h3>Turn a paper into a conference talk</h3>
+          </div>
+          <label class="done"><input type="checkbox" id="done-ex4" data-done="ex4"> Done</label>
+        </div>
+        <div class="ex-body">
+          <p>Choose one of your own or a peer's papers and make it a conference presentation with Claude Design. Tell it the talk length and the audience, and ask for speaker notes.</p>
+          <div class="ba">
+            <figure class="figure">
+              <img src="img/paper_before.webp" alt="Article page of 'Exploring the vast landscape of stable materials for CO2RR' in Electrochimica Acta." width="900" height="701">
+              <figcaption>Before: the paper</figcaption>
+            </figure>
+            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            <figure class="figure">
+              <img src="img/deck_after.webp" alt="Dark title slide of a deck made from the paper, with slide thumbnails on the left." width="1200" height="569">
+              <figcaption>After: a talk deck made from it</figcaption>
+            </figure>
+          </div>
+          <p class="or">Example: <a href="https://doi.org/10.1016/j.electacta.2025.148053" target="_blank" rel="noopener">Karlsson et al., Exploring the vast landscape of stable materials for CO<sub>2</sub>RR, Electrochim. Acta 549, 148053 (2026)</a>.</p>
+        </div>
+      </article>
+
+      <article class="ex" id="ex5" data-ex="ex5">
+        <div class="ex-top">
+          <div class="ex-title">
+            <p class="eyebrow">Exercise 5</p>
+            <h3>Use Claude Academy</h3>
+          </div>
+          <label class="done"><input type="checkbox" id="done-ex5" data-done="ex5"> Done</label>
+        </div>
+        <div class="ex-body">
+          <p>Free, self-paced courses from Anthropic. Good starting points are <a href="https://academy.claude.com/courses/claude-code-101" target="_blank" rel="noopener">Claude Code 101</a> and <a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a>. All courses: <a href="https://academy.claude.com/courses" target="_blank" rel="noopener">academy.claude.com/courses</a>.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= CONTEXT ================= -->
+  <section class="section" id="context" aria-labelledby="ctx-h">
+    <div class="section-head">
+      <p class="eyebrow">Interlude · Context management</p>
+      <h2 id="ctx-h">What is context</h2>
+      <p>Context is everything Claude has in front of it on a turn: the system prompt, tool definitions, <code>CLAUDE.md</code>, the conversation so far, and every file and tool output it has read. The window has a fixed size. When it fills, the conversation is compacted or you start over.</p>
+    </div>
+
+    <div class="sub">
+      <h3>Same task, two tools: where the context goes</h3>
+      <p>Same research workflow in both tools: two papers, five ASE/GPAW scripts and a folder of calculation outputs.</p>
+      <div class="chart-card">
+        <h4>Context used after each step</h4>
+        <div class="legend" aria-hidden="true">
+          <span><i class="l-chat"></i>Claude chat</span>
+          <span><i class="l-cc"></i>Claude Code</span>
+          <span><i class="l-lim"></i>Context limit (200K tokens)</span>
+        </div>
+        <div class="chart-scroll">
+          <svg id="ctx-chart" viewBox="0 0 680 320" role="img" aria-labelledby="ctx-chart-t ctx-chart-d">
+            <title id="ctx-chart-t">Context used after each step, chat vs Claude Code</title>
+            <desc id="ctx-chart-d">Chat: 110K, 130K, 175K, then over 200K and compacted to 30K. Claude Code: 40K, 45K, 54K, 60K.</desc>
+          </svg>
+        </div>
+        <p class="note">Claude Code starts higher (about 26K before you type, for the system prompt, tools and CLAUDE.md) but grows more slowly. Chat is near the limit after step 3 and gets compacted in step 4. Numbers are illustrative estimates; check your own with <code>/context</code>.</p>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr><th scope="col">Same input</th><th scope="col">In chat</th><th scope="col">In Claude Code</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>2 papers</b><small>PDF, ~12 pp each</small></td>
+              <td><span class="num chat">~50K</span><small>full text + page images</small></td>
+              <td><span class="num cc">~1K</span><small>a subagent reads them and returns summaries</small></td>
+            </tr>
+            <tr>
+              <td><b>5 scripts</b><small>ASE / GPAW</small></td>
+              <td><span class="num chat">~20K</span><small>pasted in full</small></td>
+              <td><span class="num cc">~6K</span><small>grep finds the function; it reads only that file</small></td>
+            </tr>
+            <tr>
+              <td><b>Outputs</b><small>30 GPAW logs</small></td>
+              <td><span class="num chat">~30K</span><small>pasted excerpts; the rest won't fit</small></td>
+              <td><span class="num cc">&lt;1K</span><small>ASE parses them; only energies come back</small></td>
+            </tr>
+            <tr>
+              <td><b>Fix a bug</b><small>one function</small></td>
+              <td><span class="num chat">~5K</span><small>whole script rewritten in the reply</small></td>
+              <td><span class="num cc">~0.5K</span><small>Edit sends just the changed lines</small></td>
+            </tr>
+            <tr>
+              <td><b>New versions</b><small>after each fix</small></td>
+              <td><span class="num chat">~5K each</span><small>re-pasted to keep chat in sync</small></td>
+              <td><span class="num cc">0</span><small>already on disk</small></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>What carries over between sessions</h3>
+      <p>In chat, continuity lives in your head: you re-upload files and re-explain. In Claude Code, continuity lives on disk.</p>
+      <div class="flows">
+        <div class="flow-col">
+          <div class="flow">
+            <h4>Claude chat</h4>
+            <div class="flow-row">
+              <div class="box"><b>Session 1</b>Upload papers + scripts, iterate on the setup</div>
+              <span class="sep" aria-hidden="true">→</span>
+              <div class="box"><b>Window fills</b>Compacted to a summary, or you open a new chat</div>
+              <span class="sep" aria-hidden="true">→</span>
+              <div class="box"><b>Session 2</b>Starts blank. You re-upload, re-explain, paste a summary</div>
+            </div>
+            <p class="foot">Carries over: project knowledge files and memory (preferences), not where the analysis got to. You carry the context forward.</p>
+          </div>
+          <div class="flow">
+            <h4>Claude Code + .md files</h4>
+            <div class="flow-row">
+              <div class="box"><b>Session 1</b>Builds slabs, submits DFT jobs, parses results. Writes progress.</div>
+              <span class="sep" aria-hidden="true">→</span>
+              <div class="box"><b>/compact · /clear</b>Conversation summarized or cleared</div>
+              <span class="sep" aria-hidden="true">→</span>
+              <div class="box"><b>Session 2</b>Reads CLAUDE.md + PROGRESS.md, resumes at the next step</div>
+            </div>
+            <div class="ondisk"><b>On disk</b> · <code>CLAUDE.md · PROGRESS.md · structures/ · calcs/ · analysis/</code></div>
+          </div>
+          <p class="prose">Ask Claude to keep a <code>PROGRESS.md</code> and import it from <code>CLAUDE.md</code> with <code>@PROGRESS.md</code>, so every fresh session starts knowing where the analysis is. <code>CLAUDE.md</code> is loaded at the start of every session and after compaction.</p>
+        </div>
+        <div class="stack">
+          <div class="code">
+            <div class="code-head"><span>CLAUDE.md · standing rules · you write</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <pre><code><span class="k"># *CO on Cu-alloy (211) steps</span>
+- GPAW, RPBE, PW 500 eV, k 4×4×1
+- submit with MyQueue on Niflheim
+- never overwrite converged .traj
+- log each step in PROGRESS.md
+@PROGRESS.md</code></pre>
+          </div>
+          <div class="code">
+            <div class="code-head"><span>PROGRESS.md · state · Claude updates</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <pre><code>[x] k-points + cutoff converged
+[x] Clean slabs: Cu, CuAg, CuPd
+[ ] *CO, *COH on all sites
+Decision: fix bottom 2 layers
+  (energies change &lt; 0.02 eV)
+Next: CO/COH scaling relation</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MODELS ================= -->
+  <section class="section" id="models" aria-labelledby="mod-h">
+    <div class="section-head">
+      <p class="eyebrow">Interlude · Model and effort</p>
+      <h2 id="mod-h">Model sets how capable; effort sets how thorough</h2>
+      <p>Two settings seem to make the answer better, but they do different things.</p>
+    </div>
+
+    <div class="dials">
+      <div class="dial">
+        <h4>Model</h4>
+        <p>Which trained weights answer, and the price per token. Context steers a model; it can't add knowledge to it.</p>
+        <div class="models">
+          <div class="model">
+            <div class="model-name">Haiku<small>fast, high volume</small></div>
+            <p>Mechanical, well-specified work; subagents<span class="eg">Subagent parses 30 GPAW logs, returns energies</span></p>
+          </div>
+          <div class="model">
+            <div class="model-name">Sonnet<small>the generalist</small></div>
+            <p>Everyday coding and writing from clear instructions<span class="eg">Write the ASE script that builds the (211) slabs</span></p>
+          </div>
+          <div class="model">
+            <div class="model-name">Opus<small>the expert · start here</small></div>
+            <p>Most work; ambiguity, subtle bugs, unfamiliar domains<span class="eg">Find why the CuPd slab's SCF won't converge</span></p>
+          </div>
+          <div class="model">
+            <div class="model-name">Fable<small>the specialist</small></div>
+            <p>Long, multi-step problems smaller models can't finish; highest cost per token<span class="eg">Run a multi-day alloy screening end to end</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="dial">
+        <h4>Effort</h4>
+        <p>How much work Claude does each turn. Applies to every output token, not just thinking.</p>
+        <div class="effort">
+          <div><b>low</b><span>simple tasks, subagents</span></div>
+          <div><b>medium</b><span>balanced speed, cost</span></div>
+          <div><b>high</b><span>complex reasoning, coding</span></div>
+          <div><b>xhigh</b><span>agentic runs over 30 min</span></div>
+          <div><b>max</b><span>frontier problems</span></div>
+        </div>
+        <p class="or">Default: high on most models; medium on Opus 5.5 and Haiku 5.5.</p>
+        <div class="panel">
+          <h5>Higher effort means more…</h5>
+          <ul>
+            <li>thinking before acting</li>
+            <li>files read</li>
+            <li>checks run (tests, convergence)</li>
+            <li>steps before checking in</li>
+          </ul>
+          <p class="muted">At lower effort Claude asks you for context rather than investigating. Effort sets how far it's willing to go, not how far it must.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="callout" style="margin-top: 24px;"><b>Start with the defaults.</b> Change effort as a standing preference for your kind of work, not task by task.</p>
+
+    <div class="sub">
+      <h3>When the result is wrong: didn't know enough, or didn't try hard enough?</h3>
+      <div class="two">
+        <div class="diag">
+          <div class="panel">
+            <h5>1 · Check the context first</h5>
+            <p>Vague prompt? Missing tool or skill? Rule not in <code>CLAUDE.md</code>? If a task needs more effort than it should, the fix is usually upstream.</p>
+            <p class="muted">e.g. the RPBE and k-point policy was never written down</p>
+          </div>
+          <p class="down">↓ Context was good, still wrong</p>
+          <div class="diag-split">
+            <div class="diag-card">
+              <p class="eyebrow">Didn't know enough</p>
+              <h5>→ Larger model</h5>
+              <p>Had the context, clearly tried, still wrong. Confidently wrong however much you add.</p>
+              <p class="eg">Keeps misdiagnosing the CuPd SCF failure with logs and GPAW docs in context</p>
+            </div>
+            <div class="diag-card">
+              <p class="eyebrow">Didn't try hard enough</p>
+              <h5>→ Higher effort</h5>
+              <p>Skipped a file, didn't run the check, stopped partway. Most likely if you set effort below default.</p>
+              <p class="eg">Reports “all converged” after reading 5 of 30 logs</p>
+            </div>
+          </div>
+          <div class="diag-split">
+            <div class="panel">
+              <h5>Routine for a while → smaller model</h5>
+              <p class="muted">Faster and cheaper at the same quality: re-plotting, renaming, formatting tables.</p>
+            </div>
+            <div class="panel">
+              <h5>Hard, multi-step → larger can cost less</h5>
+              <p class="muted">Higher price per token, but fewer wasted iterations per task.</p>
+            </div>
+          </div>
+        </div>
+        <div class="stack">
+          <div class="code">
+            <div class="code-head"><span>How to set it · Claude Code</span></div>
+            <pre><code><span class="k">/model</span>              <span class="c">pick a model</span>
+<span class="k">/effort</span>             <span class="c">slider</span>
+<span class="k">/effort high</span>        <span class="c">set directly</span>
+<span class="k">/effort auto</span>        <span class="c">back to default</span>
+<span class="k">claude --effort low</span> <span class="c">this session only</span></code></pre>
+          </div>
+          <div class="code">
+            <div class="code-head"><span>Cheap subagent · .claude/agents/log-parser.md</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <pre><code>---
+name: log-parser
+model: haiku
+effort: low
+---</code></pre>
+          </div>
+          <p class="or">In Claude chat: the model menu next to Send, then Effort.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SESSIONS ================= -->
+  <section class="section" id="sessions" aria-labelledby="ses-h">
+    <div class="section-head">
+      <p class="eyebrow">Tips · Sessions and planning</p>
+      <h2 id="ses-h">Start fresh or keep going? Plan or just do it?</h2>
+    </div>
+    <div class="two">
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">When…</th><th scope="col">Do this</th></tr></thead>
+          <tbody>
+            <tr><td><b>Same problem, history still helps</b><span class="eg">mid-way through one SCF failure</span></td><td>Keep going</td></tr>
+            <tr><td><b>Same task, window filling up</b><span class="eg"><code>/context</code> shows it's mostly old output</span></td><td><code>/compact keep energies + decisions</code></td></tr>
+            <tr><td><b>New, unrelated task</b><span class="eg">slabs done, now the methods text</span></td><td><code>/clear</code>; PROGRESS.md carries the state</td></tr>
+            <tr><td><b>Corrected it twice, still wrong</b><span class="eg">context is full of failed attempts</span></td><td><code>/clear</code>, then a better first prompt with what you learned</td></tr>
+            <tr><td><b>Plan agreed, ready to build</b><span class="eg">plan written to PLAN.md</span></td><td>New session that reads the plan</td></tr>
+            <tr><td><b>Side question or big search</b><span class="eg">“what does fixmagmom do?”</span></td><td><code>/btw</code> for a question; a subagent for a search</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stack">
+        <div class="panel">
+          <h5>Plan mode · <kbd>Shift</kbd>+<kbd>Tab</kbd></h5>
+          <p>Claude reads and proposes a plan; nothing changes until you approve it.</p>
+        </div>
+        <div class="panel">
+          <h5>Plan first when…</h5>
+          <ul>
+            <li>you're unsure of the approach</li>
+            <li>the change touches several files</li>
+            <li>the code or package is unfamiliar</li>
+          </ul>
+          <p class="muted">e.g. move all adsorbate jobs into one MyQueue workflow</p>
+        </div>
+        <div class="panel">
+          <h5>Just do it when…</h5>
+          <p>you can describe the change in one sentence.</p>
+          <p class="muted">e.g. rename E_ads to dE_ads in analysis/</p>
+        </div>
+        <p class="or">Edit the plan before approving: <kbd>Ctrl</kbd>+<kbd>G</kbd>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= SKILLS ================= -->
+  <section class="section" id="skills" aria-labelledby="sk-h">
+    <div class="section-head">
+      <p class="eyebrow">Tips · Skills</p>
+      <h2 id="sk-h">Load knowledge only when it's needed</h2>
+      <p>Where should an instruction live? It depends on how often Claude needs it.</p>
+    </div>
+    <div class="two">
+      <div class="stack">
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th scope="col">Put it in…</th><th scope="col">For</th><th scope="col">e.g.</th></tr></thead>
+            <tbody>
+              <tr><td><b>CLAUDE.md</b><small>every session</small></td><td>Short facts and rules that always apply</td><td>GPAW settings, queue, folder layout</td></tr>
+              <tr><td><b>Skill</b><small>only when relevant</small></td><td>Procedures and reference you reuse</td><td>Convergence test for a new surface</td></tr>
+              <tr><td><b>Hook</b><small>runs every time</small></td><td>Anything that must never be skipped</td><td>Block overwriting converged .traj</td></tr>
+              <tr><td><b>Subagent</b><small>own context</small></td><td>Heavy reading; returns a summary</td><td>Summarise two DFT papers</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="diag-split">
+          <div class="panel">
+            <h5>Make a skill when…</h5>
+            <p>you keep pasting the same steps, or a CLAUDE.md section has become a procedure.</p>
+          </div>
+          <div class="panel">
+            <h5>Or ask Claude</h5>
+            <p><i>“Turn what we just did into a skill.”</i></p>
+          </div>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="code">
+          <div class="code-head"><span>.claude/skills/gpaw-convergence/SKILL.md</span><button class="copy" type="button" data-copy>Copy</button></div>
+          <pre><code>---
+name: gpaw-convergence
+description: Converge k-points
+  and cutoff for a new slab.
+  Use when adding a surface.
+---
+1. Run scripts/kpt_scan.py
+2. Stop at ΔE &lt; 1 meV/atom
+3. Plot E(k), log PROGRESS.md
+Settings: reference/gpaw.md</code></pre>
+        </div>
+        <ul class="checklist">
+          <li><b>Description = what + when.</b> It's how Claude decides to load it.</li>
+          <li><b>Keep it short;</b> details go in reference files, read only if needed.</li>
+          <li><b>Scripts run;</b> only their output enters context.</li>
+          <li>Run it yourself: <code>/gpaw-convergence</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= NIFLHEIM ================= -->
+  <section class="section" id="niflheim" aria-labelledby="nif-h">
+    <div class="section-head">
+      <p class="eyebrow">Talk · Leo Karlsson</p>
+      <h2 id="nif-h">Niflheim with Claude</h2>
+      <p>Claude can write, submit and check jobs for you, but the cluster's rules still apply. Write them into <code>CLAUDE.md</code> so Claude follows them every session.</p>
+    </div>
+
+    <div class="facts">
+      <div class="fact">
+        <h4>DTU network only</h4>
+        <p>SSH works only from the DTU network. Off campus, connect through the DTU VPN first.</p>
+      </div>
+      <div class="fact">
+        <h4>Login nodes are shared</h4>
+        <p>Processes are limited to 20 minutes of CPU time. Long tasks belong in batch jobs, never on the login node.</p>
+      </div>
+      <div class="fact">
+        <h4>Test small first</h4>
+        <p>The <code>xeon24el9_test</code> partition has a 10-minute limit and is for development only. <code>sbatch --test-only</code> checks a script without submitting it.</p>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>Pick the login node that matches your partition</h3>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Login node</th><th scope="col">Partitions</th></tr></thead>
+          <tbody>
+            <tr><td><code>slid.fysik.dtu.dk</code></td><td><span class="mono">xeon24el9</span></td></tr>
+            <tr><td><code>sylg.fysik.dtu.dk</code>, <code>slid2.fysik.dtu.dk</code></td><td><span class="mono">xeon24el8</span></td></tr>
+            <tr><td><code>vid.fysik.dtu.dk</code>, <code>thul.fysik.dtu.dk</code></td><td><span class="mono">xeon40el9, sm3090el9</span></td></tr>
+            <tr><td><code>svol.fysik.dtu.dk</code></td><td><span class="mono">xeon40el8, sm3090el8</span></td></tr>
+            <tr><td><code>hrid.fysik.dtu.dk</code></td><td><span class="mono">xeon56el9, a100el9</span></td></tr>
+            <tr><td><code>surt.fysik.dtu.dk</code></td><td><span class="mono">xeon56, a100</span></td></tr>
+            <tr><td><code>sara.fysik.dtu.dk</code></td><td><span class="mono">xeon32el9, h200el9</span></td></tr>
+            <tr><td><code>fjorm.fysik.dtu.dk</code></td><td><span class="mono">epyc96</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="or">From the <a href="https://niflheim-users.readthedocs.io/en/latest/Niflheim_Getting_Started.html" target="_blank" rel="noopener">Niflheim Getting Started</a> guide. GPU partitions need group authorization.</p>
+    </div>
+
+    <div class="sub">
+      <h3>Cluster rules for your CLAUDE.md</h3>
+      <div class="two">
+        <div class="code">
+          <div class="code-head"><span>CLAUDE.md · starting point, adjust to your project</span><button class="copy" type="button" data-copy>Copy</button></div>
+          <pre><code><span class="k">## Niflheim</span>
+- Never run calculations on the login node; submit them as jobs
+- Submit with MyQueue (mq submit), check with mq ls
+- Test new scripts on a short, small job before scaling up
+- Ask before submitting more than 10 jobs
+- Never overwrite a converged .traj
+- Log each submitted batch and its job IDs in PROGRESS.md</code></pre>
+        </div>
+        <div class="stack">
+          <p>Two habits that keep a workshop cluster happy: tell Claude the job limit up front, and have it check status with <code>mq ls</code> or <code>squeue -u $USER</code> rather than polling in a loop.</p>
+          <p class="or">Docs: <a href="https://niflheim-users.readthedocs.io/en/latest/niflheim.html" target="_blank" rel="noopener">Niflheim users</a> · <a href="https://myqueue.readthedocs.io/" target="_blank" rel="noopener">MyQueue</a> · <a href="https://gpaw.readthedocs.io/" target="_blank" rel="noopener">GPAW</a> · <a href="https://docs.ase-lib.org/" target="_blank" rel="noopener">ASE</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MARIMO ================= -->
+  <section class="section" id="marimo" aria-labelledby="mar-h">
+    <div class="section-head">
+      <p class="eyebrow">Talk · Karsten Wedel Jacobsen</p>
+      <h2 id="mar-h">marimo notebooks</h2>
+      <p>marimo notebooks are stored as plain Python <code>.py</code> files, so Claude can read, edit and diff them like any other script, and they work well in git.</p>
+    </div>
+    <div class="two">
+      <div class="code">
+        <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+        <pre><code>pip install marimo
+marimo edit notebook.py        <span class="c"># open or create a notebook</span>
+marimo run notebook.py         <span class="c"># run it as an app</span>
+marimo convert old.ipynb &gt; notebook.py</code></pre>
+      </div>
+      <div class="stack">
+        <p>marimo's own guides cover working with AI assistants and pairing a notebook with an agent such as Claude Code.</p>
+        <p class="or"><a href="https://docs.marimo.io/" target="_blank" rel="noopener">marimo docs</a> · <a href="https://docs.marimo.io/guides/generate_with_ai/" target="_blank" rel="noopener">Generate with AI</a> · <a href="https://docs.marimo.io/guides/generate_with_ai/marimo_pair/" target="_blank" rel="noopener">marimo pair</a></p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= CHEAT SHEET ================= -->
+  <section class="section" id="cheatsheet" aria-labelledby="cs-h">
+    <div class="section-head">
+      <p class="eyebrow">Reference</p>
+      <h2 id="cs-h">Cheat sheet</h2>
+    </div>
+    <div class="cheats">
+      <div class="cheat">
+        <h3>Claude Code</h3>
+        <dl>
+          <dt>/init</dt><dd>Generate a starter CLAUDE.md</dd>
+          <dt>/memory</dt><dd>Edit CLAUDE.md files</dd>
+          <dt>/context</dt><dd>See what is filling the window</dd>
+          <dt>/compact &lt;keep…&gt;</dt><dd>Summarise, keeping what you name</dd>
+          <dt>/clear</dt><dd>New conversation, project memory kept</dd>
+          <dt>/resume</dt><dd>Go back to an earlier conversation</dd>
+          <dt>/rewind</dt><dd>Roll code and conversation back to a checkpoint</dd>
+          <dt>/model · /effort</dt><dd>Change model or effort</dd>
+          <dt>Shift+Tab · /plan</dt><dd>Plan mode</dd>
+          <dt>Ctrl+G</dt><dd>Edit the plan before approving</dd>
+          <dt>/btw &lt;question&gt;</dt><dd>Side question, kept out of the history</dd>
+          <dt>/skills</dt><dd>List available skills</dd>
+          <dt>/usage</dt><dd>Session cost and plan usage</dd>
+        </dl>
+      </div>
+      <div class="cheat-col">
+      <div class="cheat">
+        <h3>Niflheim (Slurm)</h3>
+        <dl>
+          <dt>sbatch job.sh</dt><dd>Submit a batch script</dd>
+          <dt>sbatch --test-only job.sh</dt><dd>Check a script without submitting</dd>
+          <dt>squeue -u $USER</dt><dd>Your jobs</dd>
+          <dt>scancel &lt;jobid&gt;</dt><dd>Cancel a job</dd>
+          <dt>sacct -j &lt;jobid&gt;</dt><dd>Accounting after a job finishes</dd>
+          <dt>showpartitions</dt><dd>List partitions</dd>
+          <dt>showuserlimits</dt><dd>Your limits</dd>
+        </dl>
+      </div>
+      <div class="cheat">
+        <h3>MyQueue</h3>
+        <dl>
+          <dt>mq submit script.py -R 8:10h</dt><dd>8 cores for 10 hours</dd>
+          <dt>mq ls</dt><dd>List jobs with a state summary</dd>
+          <dt>mq resubmit -i 5 -R 1:1m</dt><dd>Resubmit job 5 with new resources</dd>
+          <dt>mq remove -s Fd -r .</dt><dd>Remove failed and done jobs here</dd>
+        </dl>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LINKS ================= -->
+  <section class="section" id="links" aria-labelledby="ln-h">
+    <div class="section-head">
+      <p class="eyebrow">Further reading</p>
+      <h2 id="ln-h">Links</h2>
+    </div>
+    <div class="links">
+      <div>
+        <h3>Workshop</h3>
+        <ul>
+          <li><a href="https://gitlab.gbar.dtu.dk/cattheory/software/cattheory_tutorials/-/tree/main/Agentic_coding" target="_blank" rel="noopener">Workshop harness on GitLab</a><small>cattheory_tutorials / Agentic_coding</small></li>
+          <li><a href="https://academy.claude.com/courses" target="_blank" rel="noopener">Claude Academy</a><small>Free self-paced courses</small></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Claude Code docs</h3>
+        <ul>
+          <li><a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">Overview and install</a></li>
+          <li><a href="https://code.claude.com/docs/en/commands" target="_blank" rel="noopener">Commands</a></li>
+          <li><a href="https://code.claude.com/docs/en/memory" target="_blank" rel="noopener">CLAUDE.md and memory</a></li>
+          <li><a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">Skills</a> · <a href="https://code.claude.com/docs/en/sub-agents" target="_blank" rel="noopener">Subagents</a> · <a href="https://code.claude.com/docs/en/hooks" target="_blank" rel="noopener">Hooks</a></li>
+          <li><a href="https://code.claude.com/docs/en/best-practices" target="_blank" rel="noopener">Best practices</a></li>
+          <li><a href="https://claude.com/resources/articles/claude-model-and-effort-level-in-claude-code" target="_blank" rel="noopener">Choosing a model and effort level</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Cluster and codes</h3>
+        <ul>
+          <li><a href="https://niflheim-users.readthedocs.io/en/latest/niflheim.html" target="_blank" rel="noopener">Niflheim users</a></li>
+          <li><a href="https://myqueue.readthedocs.io/" target="_blank" rel="noopener">MyQueue</a></li>
+          <li><a href="https://docs.ase-lib.org/" target="_blank" rel="noopener">ASE</a> · <a href="https://gpaw.readthedocs.io/" target="_blank" rel="noopener">GPAW</a></li>
+          <li><a href="https://docs.marimo.io/" target="_blank" rel="noopener">marimo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Papers in the exercises</h3>
+        <ul>
+          <li><a href="https://doi.org/10.1149/1.1856988" target="_blank" rel="noopener">Nørskov et al. (2005)</a><small>Trends in the exchange current for hydrogen evolution, J. Electrochem. Soc. 152, J23</small></li>
+          <li><a href="https://doi.org/10.1016/j.electacta.2025.148053" target="_blank" rel="noopener">Karlsson et al. (2026)</a><small>Exploring the vast landscape of stable materials for CO₂RR, Electrochim. Acta 549, 148053</small></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Claude in Science · CatTheory &amp; CAMD, DTU Physics</p>
+    <p>Built from the workshop slides. Token numbers are illustrative estimates.</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Toast ---------- */
+  var toast = document.getElementById("toast");
+  var toastTimer = null;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.hidden = true; }, 1600);
+  }
+
+  /* ---------- Copy buttons ---------- */
+  function selectNode(node) {
+    try {
+      var range = document.createRange();
+      range.selectNodeContents(node);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    } catch (e) {}
+  }
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    var holder = btn.closest(".code, .prompt");
+    var node = holder && holder.querySelector("pre, .prompt-text");
+    if (!node) return;
+    var text = node.innerText.replace(/\s+$/, "");
+    var fallback = function () { selectNode(node); showToast("Selected. Press Ctrl+C or ⌘C to copy"); };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          var old = btn.textContent;
+          btn.textContent = "Copied";
+          setTimeout(function () { btn.textContent = old; }, 1400);
+        }, fallback);
+      } else {
+        fallback();
+      }
+    } catch (err) { fallback(); }
+  });
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll("[data-tabs]").forEach(function (root) {
+    var tabs = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+    function select(tab) {
+      tabs.forEach(function (t) {
+        var on = t === tab;
+        t.setAttribute("aria-selected", on ? "true" : "false");
+        t.tabIndex = on ? 0 : -1;
+        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
+      });
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener("click", function () { select(t); });
+      t.addEventListener("keydown", function (e) {
+        var j = null;
+        if (e.key === "ArrowRight") j = (i + 1) % tabs.length;
+        if (e.key === "ArrowLeft") j = (i - 1 + tabs.length) % tabs.length;
+        if (j !== null) { e.preventDefault(); tabs[j].focus(); select(tabs[j]); }
+      });
+    });
+    if (/Win/i.test(navigator.platform || "")) {
+      var ps = root.querySelector("#tab-ps");
+      if (ps) select(ps);
+    }
+  });
+
+  /* ---------- Exercise progress (this browser only) ---------- */
+  var KEY = "claude-in-science:done";
+  var done = {};
+  try { done = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { done = {}; }
+  document.querySelectorAll("[data-done]").forEach(function (box) {
+    var id = box.getAttribute("data-done");
+    var card = box.closest(".ex");
+    function paint() { if (card) card.classList.toggle("is-done", box.checked); }
+    box.checked = !!done[id];
+    paint();
+    box.addEventListener("change", function () {
+      done[id] = box.checked;
+      paint();
+      try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {}
+    });
+  });
+
+  /* ---------- Context chart ---------- */
+  var svg = document.getElementById("ctx-chart");
+  if (svg) {
+    var NS = "http://www.w3.org/2000/svg";
+    var W = 680, H = 320, L = 52, R = 12, T = 22, B = 66;
+    var pw = W - L - R, ph = H - T - B, yMax = 220;
+    var y = function (v) { return T + ph * (1 - v / yMax); };
+    var el = function (name, attrs, text) {
+      var n = document.createElementNS(NS, name);
+      for (var k in attrs) n.setAttribute(k, attrs[k]);
+      if (text != null) n.textContent = text;
+      svg.appendChild(n);
+      return n;
+    };
+    [0, 50, 100, 150, 200].forEach(function (v) {
+      el("line", { "class": "grid", x1: L, x2: W - R, y1: y(v), y2: y(v) });
+      el("text", { "class": "axis-t", x: L - 8, y: y(v) + 4, "text-anchor": "end" }, v === 0 ? "0" : v + "K");
+    });
+    var steps = [
+      { a: "Load 2 papers,", b: "5 scripts, outputs", chat: 110, cc: 40 },
+      { a: "Debug a script", b: "", chat: 130, cc: 45 },
+      { a: "Revise the", b: "analysis", chat: 175, cc: 54 },
+      { a: "Draft methods", b: "(chat compacted)", chat: 30, ghost: true, cc: 60 }
+    ];
+    var gw = pw / steps.length, bw = 38, gap = 6;
+    steps.forEach(function (s, i) {
+      var cx = L + gw * i + gw / 2;
+      var x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
+      if (s.ghost) {
+        el("rect", { "class": "ghost", x: x1 + 0.75, y: y(210), width: bw - 1.5, height: y(30) - y(210) });
+        el("text", { "class": "v-chat", x: x1 + bw / 2, y: y(210) - 6, "text-anchor": "middle" }, ">200K");
+      }
+      el("rect", { "class": "bar-chat", x: x1, y: y(s.chat), width: bw, height: y(0) - y(s.chat), rx: 2 });
+      if (!s.ghost) el("text", { "class": "v-chat", x: x1 + bw / 2, y: y(s.chat) - 6, "text-anchor": "middle" }, s.chat + "K");
+      else el("text", { "class": "v-chat", x: x1 + bw / 2, y: y(s.chat) - 6, "text-anchor": "middle" }, "30K");
+      el("rect", { "class": "bar-cc", x: x2, y: y(s.cc), width: bw, height: y(0) - y(s.cc), rx: 2 });
+      el("text", { "class": "v-cc", x: x2 + bw / 2, y: y(s.cc) - 6, "text-anchor": "middle" }, s.cc + "K");
+      el("text", { "class": "x-t", x: cx, y: H - B + 22, "text-anchor": "middle" }, s.a);
+      if (s.b) el("text", { "class": "x-s", x: cx, y: H - B + 39, "text-anchor": "middle" }, s.b);
+    });
+    el("line", { "class": "limit", x1: L, x2: W - R, y1: y(200), y2: y(200) });
+    el("text", { "class": "lim-t", x: L + 6, y: y(200) - 6 }, "200K limit");
+  }
+
+  /* ---------- Section rail highlight ---------- */
+  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
+  var byId = {};
+  links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
+  if ("IntersectionObserver" in window) {
+    var current = null;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          if (current) current.removeAttribute("aria-current");
+          current = byId[en.target.id];
+          if (current) {
+            current.setAttribute("aria-current", "true");
+            var scroller = current.closest(".rail-scroll");
+            if (scroller) {
+              var left = current.offsetLeft - scroller.clientWidth / 2 + current.clientWidth / 2;
+              scroller.scrollLeft = Math.max(0, left);
+            }
+          }
+        }
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    Object.keys(byId).forEach(function (id) {
+      var s = document.getElementById(id);
+      if (s) io.observe(s);
+    });
+  }
+})();
+</script>
+</body>
+</html>
