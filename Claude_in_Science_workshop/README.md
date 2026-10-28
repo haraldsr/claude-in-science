@@ -4,6 +4,8 @@ Static companion site for the CatTheory & CAMD workshop. No build step: everythi
 
 - `public/index.html` is the whole page (HTML, CSS and JS in one file).
 - `public/img/` holds the five figures used in the exercises.
+- `qr-code.svg` / `qr-code.png` point at the published page, for slides and handouts. They are
+  not part of the site.
 
 The Claude Code harness the page tells people to install lives in `../Agentic_coding/`. If its
 bundle layout or install steps change, update the page's Setup section to match.
@@ -21,3 +23,8 @@ skips itself while the repo is private; after making it public, run it once from
 
 Open `public/index.html` in any editor and change the text directly. Fonts load from Google Fonts;
 everything else is local. To preview, open the file in a browser.
+
+Each `<section class="section">` in `<main>` shows as its own page, picked by the URL hash
+(`#setup`, `#niflheim`, …); the masthead is the Home page. To add a page, add a section with an
+`id` and a matching link in the `.rail` nav; its order there sets the Previous/Next buttons.
+Without JavaScript the page falls back to one long scroll.

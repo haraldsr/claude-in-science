@@ -8,6 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Red+Hat+Display:wght@500;700;800&family=Red+Hat+Text:ital,wght@0,400;0,500;0,700;1,400&display=swap">
+<script>
+  /* Set the view classes before first paint so the long page never flashes. */
+  document.documentElement.className += " views" + (/^#?(top|program)?$/.test(location.hash) ? " view-home" : "");
+</script>
 <style>
 /* Layout: full-bleed DTU-blue masthead holding the program, a sticky section rail,
    then one reading column (~70ch) with wider panels for tables, the chart and code. */
@@ -103,7 +107,6 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 body {
   margin: 0;
   background: var(--bg);
@@ -198,7 +201,6 @@ li + li { margin-top: 0.3em; }
   display: grid; gap: 8px; align-content: start;
   min-width: 0;
 }
-.talk .who { font-size: var(--step--1); color: var(--band-muted); font-weight: 500; }
 .talk h3 { font-size: var(--step-2); font-weight: 700; }
 .talk a { color: var(--band-ink); font-size: var(--step--1); font-weight: 500; }
 
@@ -222,7 +224,7 @@ li + li { margin-top: 0.3em; }
   color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent;
 }
 .rail a:hover { color: var(--ink); }
-.rail a[aria-current="true"] { color: var(--accent); border-bottom-color: var(--accent); }
+.rail a[aria-current] { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ---------- Sections ---------- */
 main { display: block; }
@@ -234,6 +236,18 @@ main { display: block; }
 .sub > h3 { font-size: var(--step-3); font-weight: 700; }
 .sub > p, .prose { max-width: var(--read); }
 .divider { border: 0; border-top: 1px solid var(--line); margin: clamp(48px, 7vw, 88px) 0 0; }
+
+/* ---------- Views: with JS, each section is its own page; without JS the page is one long scroll ---------- */
+.views main > .section:not(.is-active), .views main > .divider { display: none; }
+.views:not(.view-home) .masthead { display: none; }
+.pager { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: clamp(48px, 7vw, 80px); }
+.pager a {
+  display: grid; gap: 2px; padding: 14px 18px; border: 1px solid var(--line); border-radius: var(--radius);
+  text-decoration: none; color: var(--ink); font-family: var(--font-display); font-weight: 700; font-size: var(--step-2);
+}
+.pager a:hover { border-color: var(--accent); color: var(--accent); }
+.pager small { font-family: var(--font-body); font-weight: 500; font-size: var(--step--1); color: var(--muted); }
+.pager .next { grid-column: 2; text-align: right; }
 
 /* ---------- Setup steps ---------- */
 .steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; counter-reset: step; }
@@ -289,7 +303,7 @@ main { display: block; }
 .tablist button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
 .or { font-size: var(--step-0); color: var(--muted); }
-.pair { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.pair { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
 .pair > * { min-width: 0; }
 .mini-label { font-size: var(--step--1); font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
 
@@ -500,17 +514,14 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
       </div>
       <div class="talks">
         <article class="talk">
-          <p class="who">Harald Skat-Rørdam</p>
           <h3>Optimising Claude &amp; token use for programming</h3>
           <a href="#context">Goes with: Context, Models &amp; effort, Sessions, Skills</a>
         </article>
         <article class="talk">
-          <p class="who">Leo Karlsson</p>
           <h3>Running your first simulations on Niflheim with Claude</h3>
           <a href="#niflheim">Goes with: Niflheim</a>
         </article>
         <article class="talk">
-          <p class="who">Karsten Wedel Jacobsen</p>
           <h3>Programming with Claude and marimo notebooks</h3>
           <a href="#marimo">Goes with: marimo</a>
         </article>
@@ -523,6 +534,7 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
   <div class="wrap">
     <div class="rail-scroll">
       <ul>
+        <li><a href="#top">Home</a></li>
         <li><a href="#setup">Setup</a></li>
         <li><a href="#exercises">Exercises</a></li>
         <li><a href="#context">Context</a></li>
@@ -622,11 +634,12 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
         <span class="step-n" aria-hidden="true">4</span>
         <div class="step-body">
           <h3>Make sure you can reach Niflheim</h3>
-          <p>SSH to Niflheim only works from the DTU network. Off campus, connect to the DTU VPN first. Pick the login node that matches the partition you will use (<a href="#niflheim">table below</a>).</p>
+          <p>SSH to Niflheim only works from the DTU network. Off campus, connect to the DTU VPN first.</p>
           <div class="code">
             <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-            <pre><code>ssh username@svol.fysik.dtu.dk</code></pre>
+            <pre><code>ssh username@slid.fysik.dtu.dk</code></pre>
           </div>
+          <p class="or"><code>slid</code> is one of several login nodes; others are <code>slid2</code>, <code>sylg</code>, <code>thul</code>, <code>vid</code> and <code>svol</code>. Log in to the one that matches the partition you will run on (see the <a href="#niflheim">login node table</a>).</p>
         </div>
       </li>
     </ol>
@@ -637,7 +650,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
     <div class="section-head">
       <p class="eyebrow">Hands-on</p>
       <h2 id="ex-h">Exercises</h2>
-      <p>Start with exercise 1; it shows why everything after it works the way it does. Exercises 2 to 5 are bigger, so pick the ones closest to your own work. Ticking an exercise off is saved in this browser only.</p>
+      <p>Work through all five exercises in order. Exercise 1 shows why everything after it works the way it does. Ticking an exercise off is saved in this browser only.</p>
     </div>
 
     <div class="exercises">
@@ -1110,7 +1123,7 @@ Settings: reference/gpaw.md</code></pre>
   <!-- ================= NIFLHEIM ================= -->
   <section class="section" id="niflheim" aria-labelledby="nif-h">
     <div class="section-head">
-      <p class="eyebrow">Talk · Leo Karlsson</p>
+      <p class="eyebrow">Talk</p>
       <h2 id="nif-h">Niflheim with Claude</h2>
       <p>Claude can write, submit and check jobs for you, but the cluster's rules still apply. Write them into <code>CLAUDE.md</code> so Claude follows them every session.</p>
     </div>
@@ -1174,7 +1187,7 @@ Settings: reference/gpaw.md</code></pre>
   <!-- ================= MARIMO ================= -->
   <section class="section" id="marimo" aria-labelledby="mar-h">
     <div class="section-head">
-      <p class="eyebrow">Talk · Karsten Wedel Jacobsen</p>
+      <p class="eyebrow">Talk</p>
       <h2 id="mar-h">marimo notebooks</h2>
       <p>marimo notebooks are stored as plain Python <code>.py</code> files, so Claude can read, edit and diff them like any other script, and they work well in git.</p>
     </div>
@@ -1432,33 +1445,42 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
     el("text", { "class": "lim-t", x: L + 6, y: y(200) - 6 }, "200K limit");
   }
 
-  /* ---------- Section rail highlight ---------- */
+  /* ---------- Views: one section per page, picked by the URL hash ---------- */
+  var root = document.documentElement;
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
-  var byId = {};
-  links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
-  if ("IntersectionObserver" in window) {
-    var current = null;
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          if (current) current.removeAttribute("aria-current");
-          current = byId[en.target.id];
-          if (current) {
-            current.setAttribute("aria-current", "true");
-            var scroller = current.closest(".rail-scroll");
-            if (scroller) {
-              var left = current.offsetLeft - scroller.clientWidth / 2 + current.clientWidth / 2;
-              scroller.scrollLeft = Math.max(0, left);
-            }
-          }
-        }
-      });
-    }, { rootMargin: "-45% 0px -50% 0px" });
-    Object.keys(byId).forEach(function (id) {
-      var s = document.getElementById(id);
-      if (s) io.observe(s);
-    });
+  var order = links.map(function (a) { return a.getAttribute("href").slice(1); });
+  var baseTitle = document.title;
+  var pager = document.createElement("nav");
+  pager.className = "pager";
+  pager.setAttribute("aria-label", "Pages");
+  document.querySelector("main").appendChild(pager);
+
+  function pagerLink(i, cls, label) {
+    if (i < 0 || i >= links.length) return "";
+    return '<a class="' + cls + '" href="#' + order[i] + '"><small>' + label + "</small>" + links[i].innerHTML + "</a>";
   }
+  function render() {
+    var id = decodeURIComponent(location.hash.slice(1));
+    var target = id ? document.getElementById(id) : null;
+    var section = target && target.closest("main > .section");
+    var view = section ? section.id : "top";
+    var i = order.indexOf(view);
+    root.classList.toggle("view-home", view === "top");
+    document.querySelectorAll("main > .section").forEach(function (s) {
+      s.classList.toggle("is-active", s.id === view);
+    });
+    links.forEach(function (a, j) {
+      if (j === i) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    });
+    pager.innerHTML = pagerLink(i - 1, "prev", "← Previous") + pagerLink(i + 1, "next", "Next →");
+    document.title = view === "top" ? baseTitle : links[i].textContent + " · " + baseTitle;
+    var scroller = links[i].closest(".rail-scroll");
+    scroller.scrollLeft = Math.max(0, links[i].offsetLeft - scroller.clientWidth / 2 + links[i].clientWidth / 2);
+    if (target && section && target !== section) target.scrollIntoView();
+    else window.scrollTo(0, 0);
+  }
+  window.addEventListener("hashchange", render);
+  render();
 })();
 </script>
 </body>
