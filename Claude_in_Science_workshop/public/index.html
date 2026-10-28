@@ -525,7 +525,9 @@ svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
 .legend i.k-ctx { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
 .legend i.k-demand { background: var(--bg); border: 1px dashed var(--muted); }
 .legend i.k-hook { background: var(--code-bg); }
-.lanes { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); counter-reset: none; }
+
+/* Lanes: the four moments in a session, each with its pieces as tokens */
+.lanes { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 640px) { .lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (min-width: 1040px) { .lanes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .lanes > li { margin: 0; }
@@ -535,15 +537,69 @@ svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
   width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex: none;
   background: var(--accent); color: var(--on-accent); font-size: var(--step--1); font-weight: 800;
 }
-.lane ul { list-style: none; padding: 0; display: grid; gap: 6px; }
-.lane li { margin: 0; padding: 8px 10px; border-radius: 6px; font-size: var(--step--1); line-height: 1.4; display: grid; gap: 1px; }
-.lane li b { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; overflow-wrap: anywhere; }
-.lane li.k-ctx { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
-.lane li.k-ctx b { color: var(--accent); }
-.lane li.k-demand { background: var(--bg); border: 1px dashed var(--muted); }
-.lane li.k-hook { background: var(--code-bg); color: var(--code-muted); }
-.lane li.k-hook b { color: var(--code-ink); }
+.lane ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.lane li { margin: 0; max-width: 100%; }
+.tok {
+  font: 600 0.78rem/1.2 var(--font-mono); padding: 7px 9px; border-radius: 6px; cursor: pointer;
+  border: 1px solid transparent; text-align: left; max-width: 100%; overflow-wrap: anywhere;
+}
+.tok.k-ctx { background: var(--accent-soft); color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.tok.k-demand { background: var(--bg); color: var(--ink); border: 1px dashed var(--muted); }
+.tok.k-hook { background: var(--code-bg); color: var(--code-ink); }
+.tok[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: 2px; }
 .lane-note { font-size: var(--step--1); color: var(--muted); }
+
+/* Inspector: point at an item and its details show in one panel. Without JS, details sit inline. */
+.inspect { display: grid; gap: 14px; }
+.detail { font-size: var(--step--1); color: var(--muted); padding: 4px 2px 8px; }
+.inspect-panel { display: none; }
+.views .inspect .detail { display: none; }
+.views .inspect-panel {
+  display: block; min-height: 10rem; padding: 16px 18px;
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+}
+.views .lane-panel { min-height: 6.5rem; }
+.inspect-panel { font-size: var(--step-0); }
+.inspect-panel h5 { font-family: var(--font-display); font-size: var(--step-2); font-weight: 700; margin: 0 0 4px; color: var(--ink); overflow-wrap: anywhere; }
+.inspect-panel p { margin: 0; }
+.inspect-panel > * + * { margin-top: 12px; }
+.inspect-panel > .d-kind + h5 { margin-top: 0; }
+.d-kind { display: inline-block; font-size: var(--step--1); font-weight: 600; padding: 2px 9px; border-radius: 999px; margin-bottom: 8px; }
+.d-kind.k-ctx { background: var(--accent-soft); color: var(--accent); }
+.d-kind.k-demand { border: 1px dashed var(--muted); color: var(--ink); }
+.d-kind.k-hook { background: var(--code-bg); color: var(--code-ink); }
+.d-head { display: flex; gap: 14px; align-items: flex-start; }
+.d-head p { color: var(--muted); }
+.d-meta { font-size: var(--step--1); color: var(--muted); }
+.d-try { font-size: var(--step--1); color: var(--accent); }
+@media (min-width: 900px) {
+  .inspect.split { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); align-items: start; gap: 20px; }
+  .views .inspect.split .inspect-panel { position: sticky; top: 64px; }
+}
+
+/* Tiles: one icon per subagent or skill */
+.tiles { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.tiles li { margin: 0; }
+.tile {
+  width: 100%; height: 100%; display: grid; justify-items: center; align-content: start; gap: 7px;
+  padding: 16px 6px 12px; cursor: pointer; font: inherit; color: var(--ink);
+  background: var(--surface); border: 1px solid transparent; border-radius: var(--radius);
+}
+.tile:hover { border-color: var(--line); }
+.tile[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); }
+.tile-name { font: 600 0.78rem/1.25 var(--font-mono); text-align: center; overflow-wrap: anywhere; }
+.ic { width: 28px; height: 28px; color: var(--accent); flex: none; }
+.ic.big { width: 26px; height: 26px; padding: 11px; box-sizing: content-box; background: var(--accent-soft); border-radius: 50%; }
+.ic.sm { width: 22px; height: 22px; }
+
+/* Effort meter, on the same five-step scale as Models & effort */
+.meter { display: inline-flex; align-items: center; gap: 3px; }
+.meter i { width: 9px; height: 9px; border-radius: 2px; background: var(--line); }
+.meter.lvl-1 i:nth-of-type(-n+1), .meter.lvl-2 i:nth-of-type(-n+2), .meter.lvl-3 i:nth-of-type(-n+3),
+.meter.lvl-4 i:nth-of-type(-n+4), .meter.lvl-5 i { background: var(--accent); }
+.meter b { margin-left: 6px; font: 600 var(--step--1)/1 var(--font-body); color: var(--ink); }
+
+/* File tree */
 .tree { display: grid; border-top: 1px solid var(--line); }
 .tree > div {
   display: grid; grid-template-columns: minmax(150px, 14rem) minmax(0, 1fr); gap: 2px 20px;
@@ -551,19 +607,22 @@ svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
 }
 .tree > div > code { white-space: pre; background: none; padding: 0; color: var(--accent); font-weight: 600; font-size: 0.84rem; }
 @media (max-width: 560px) { .tree > div { grid-template-columns: minmax(0, 1fr); } }
+
+/* Pipeline: finders, then verifier, then you */
+.pipe-h { font-family: var(--font-display); font-size: var(--step-1); font-weight: 700; margin-top: 10px; }
+.pipeline { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); align-items: stretch; }
+@media (min-width: 900px) { .pipeline { grid-template-columns: minmax(0, 1.25fr) 40px minmax(0, 1fr) 40px minmax(0, 0.9fr); } }
+.pipe-stage { display: grid; gap: 10px; align-content: start; padding: 14px 16px; border-radius: var(--radius); background: var(--surface); }
+.pipe-stage.key { background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.pipe-icons { display: flex; gap: 6px; flex-wrap: wrap; }
+.pipe-stage p { display: grid; gap: 6px; justify-items: start; font-size: var(--step--1); color: var(--muted); }
+.pipe-stage p b { font-family: var(--font-display); font-size: var(--step-1); color: var(--ink); }
+.pipe-arrow { width: 40px; height: 12px; color: var(--muted); align-self: center; justify-self: center; }
+@media (max-width: 899px) { .pipe-arrow { transform: rotate(90deg); margin: 6px 0; } }
 .cards { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
 .card { background: var(--surface); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 4px; align-content: start; font-size: var(--step-0); min-width: 0; }
 .card b { font-family: var(--font-mono); font-size: 0.86rem; color: var(--accent); overflow-wrap: anywhere; }
 .card span { color: var(--muted); }
-.card { grid-template-columns: minmax(0, 1fr) auto; }
-.card > span { grid-column: 1 / -1; }
-.eff {
-  font: 600 0.72rem/1 var(--font-mono); font-style: normal; color: var(--ink);
-  padding: 4px 7px; border-radius: 4px; align-self: start; white-space: nowrap;
-}
-.eff-low { background: color-mix(in srgb, var(--accent) 14%, var(--bg)); }
-.eff-medium { background: color-mix(in srgb, var(--accent) 30%, var(--bg)); }
-.eff-high { background: color-mix(in srgb, var(--accent) 52%, var(--bg)); }
 .bundles th small { display: block; font-family: var(--font-body); font-weight: 400; letter-spacing: 0; color: var(--muted); margin-top: 2px; }
 .bundles th code { font-size: 0.9rem; }
 .bundles td.pick { background: var(--accent-soft); color: var(--accent); font-weight: 700; padding-left: 12px; }
@@ -1439,55 +1498,174 @@ Settings: reference/gpaw.md</code></pre>
       <div class="tab-plain" role="tabpanel" id="panel-har-main" aria-labelledby="tab-har-main">
         <div class="sub">
           <h3>When each piece acts</h3>
+          <p>Point at a piece, or tap it, to see what it does.</p>
           <div class="legend">
-            <span><i class="k-ctx"></i>Read into context</span>
-            <span><i class="k-demand"></i>Loaded on demand</span>
-            <span><i class="k-hook"></i>Hook: a script that runs automatically</span>
+            <span><i class="k-ctx"></i>Read every session</span>
+            <span><i class="k-demand"></i>Loaded when needed</span>
+            <span><i class="k-hook"></i>Hook: a script that runs on its own</span>
           </div>
-          <ol class="lanes">
-            <li class="lane">
-              <p class="lane-h"><span>1</span>Session start</p>
-              <ul>
-                <li class="k-ctx"><b>CLAUDE.md</b>the rules of conduct</li>
-                <li class="k-ctx"><b>LESSONS.md</b>what went wrong here before; imported by CLAUDE.md</li>
-                <li class="k-ctx"><b>.claude/rules/</b>project.md from /setup, and data-integrity.md</li>
-                <li class="k-hook"><b>node_facts</b>reads this login node's limits, live</li>
-                <li class="k-hook"><b>slurm_alloc</b>partition state, and where the submit template is</li>
-                <li class="k-hook"><b>setup_gate</b>says so if /setup is still pending</li>
-                <li class="k-hook"><b>doc_check</b>monthly nudge to re-check the docs</li>
-              </ul>
-            </li>
-            <li class="lane">
-              <p class="lane-h"><span>2</span>When the task needs it</p>
-              <ul>
-                <li class="k-demand"><b>Skills</b>you run them as /name</li>
-                <li class="k-demand"><b>Subagents</b>Claude hands off a big read and gets a summary back</li>
-                <li class="k-demand"><b>RUNBOOK.md</b>the cluster reference, read when running things</li>
-                <li class="k-demand"><b>Folder CLAUDE.md</b>loads when Claude works in that folder</li>
-              </ul>
-            </li>
-            <li class="lane">
-              <p class="lane-h"><span>3</span>Every tool call</p>
-              <ul>
-                <li class="k-hook"><b>block_until_setup</b>no edits, and only read-only commands, until /setup is done</li>
-                <li class="k-hook"><b>block_outside_root</b>stays inside the project folder</li>
-                <li class="k-hook"><b>block_login_node</b>no compute on the login node; use sbatch</li>
-                <li class="k-hook"><b>block_rm_rf</b>no rm -rf</li>
-                <li class="k-hook"><b>block_destructive_git</b>no history-rewriting git without asking</li>
-                <li class="k-hook"><b>ruff_format</b>formats Python after each edit</li>
-              </ul>
-              <p class="lane-note">The allow and deny rules and the sandbox in settings.json apply here too.</p>
-            </li>
-            <li class="lane">
-              <p class="lane-h"><span>4</span>End of turn</p>
-              <ul>
-                <li class="k-hook"><b>stop_untracked_gate</b>won't finish with stray new files lying around</li>
-                <li class="k-hook"><b>stop_autocommit</b>commits changed tracked files; pushes only if you turn it on</li>
-                <li class="k-hook"><b>audit_lessons</b>daily nudge about open items in LESSONS.md</li>
-              </ul>
-              <p class="lane-note">The first two need git and switch themselves off without it.</p>
-            </li>
-          </ol>
+          <div class="inspect" data-inspect>
+            <ol class="lanes">
+              <li class="lane">
+                <p class="lane-h"><span>1</span>Session start</p>
+                <ul>
+                  <li class="it"><button type="button" class="tok k-ctx" data-item>CLAUDE.md</button><div class="detail"><p class="d-kind k-ctx">Read every session</p><h5>CLAUDE.md</h5><p>The rules of conduct: hard constraints, how to work, verify before reporting.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-ctx" data-item>LESSONS.md</button><div class="detail"><p class="d-kind k-ctx">Read every session</p><h5>LESSONS.md</h5><p>What went wrong in this project before, and the rule that came out of it. CLAUDE.md imports it.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-ctx" data-item>.claude/rules/</button><div class="detail"><p class="d-kind k-ctx">Read every session</p><h5>.claude/rules/</h5><p><code>project.md</code>, which <code>/setup</code> writes with this project's facts, and <code>data-integrity.md</code>: never fabricate a value.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>node_facts</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>node_facts</h5><p>Reads this login node's limits live (threads, CPU time, partitions), so they are never written down wrong.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>slurm_alloc</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>slurm_alloc</h5><p>Adds the partition state and points to the submit template in RUNBOOK.md.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>setup_gate</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>setup_gate</h5><p>If <code>/setup</code> hasn't run yet, says so before any work starts.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>doc_check</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>doc_check</h5><p>About once a month, reminds Claude to re-check the harness against the latest docs.</p></div></li>
+                </ul>
+              </li>
+              <li class="lane">
+                <p class="lane-h"><span>2</span>When a task needs it</p>
+                <ul>
+                  <li class="it"><button type="button" class="tok k-demand" data-item>Skills</button><div class="detail"><p class="d-kind k-demand">Loaded when needed</p><h5>Skills</h5><p>Procedures you start with <code>/name</code>. Only their short description is in context until you do.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-demand" data-item>Subagents</button><div class="detail"><p class="d-kind k-demand">Loaded when needed</p><h5>Subagents</h5><p>Claude hands a big read to a helper with its own context and gets a short report back.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-demand" data-item>RUNBOOK.md</button><div class="detail"><p class="d-kind k-demand">Loaded when needed</p><h5>RUNBOOK.md</h5><p>The Niflheim reference: sbatch, login nodes, partitions, GPAW and ASE. Read when running things.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-demand" data-item>Folder CLAUDE.md</button><div class="detail"><p class="d-kind k-demand">Loaded when needed</p><h5>Folder CLAUDE.md</h5><p>A CLAUDE.md inside a folder loads only when Claude works on files in that folder.</p></div></li>
+                </ul>
+              </li>
+              <li class="lane">
+                <p class="lane-h"><span>3</span>Every tool call</p>
+                <ul>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>block_until_setup</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>block_until_setup</h5><p>Until <code>/setup</code> is done: no edits, and only read-only commands.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>block_outside_root</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>block_outside_root</h5><p>Keeps Claude inside the project folder: other people's data and your credentials stay out of reach.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>block_login_node</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>block_login_node</h5><p>No compute on a login node; real work goes through sbatch.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>block_rm_rf</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>block_rm_rf</h5><p>Refuses <code>rm -rf</code> and its equivalents.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>block_destructive_git</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>block_destructive_git</h5><p>Refuses git commands that throw away work or rewrite history, unless you ask for them.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>ruff_format</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>ruff_format</h5><p>Formats each Python file after Claude edits it.</p></div></li>
+                </ul>
+                <p class="lane-note">The allow and deny rules and the sandbox in settings.json apply here too.</p>
+              </li>
+              <li class="lane">
+                <p class="lane-h"><span>4</span>End of turn</p>
+                <ul>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>stop_untracked_gate</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>stop_untracked_gate</h5><p>Won't let a turn end with stray new files lying around. Needs git.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>stop_autocommit</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>stop_autocommit</h5><p>Commits changed tracked files. Pushes only if you turn it on. Needs git.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>audit_lessons</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>audit_lessons</h5><p>Once a day, points out open items piling up in LESSONS.md.</p></div></li>
+                </ul>
+              </li>
+            </ol>
+            <div class="inspect-panel lane-panel" data-inspect-panel aria-live="polite"></div>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>Subagents</h3>
+          <p>Helpers with their own context: they do a big read and send back a short report, so yours stays lean. Claude picks one when it fits, or you ask by name.</p>
+          <div class="inspect split" data-inspect>
+            <ul class="tiles">
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h8M4 10h5M4 14h4"/><circle cx="15.5" cy="13.5" r="4"/><path d="m18.5 16.5 2.5 2.5"/></svg><span class="tile-name">auditor</span><span class="meter lvl-2" title="medium effort"><i></i><i></i><i></i><i></i><i></i></span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h8M4 10h5M4 14h4"/><circle cx="15.5" cy="13.5" r="4"/><path d="m18.5 16.5 2.5 2.5"/></svg><div><h5>auditor</h5><p>Broad sweep over a module or folder: coverage, not depth.</p></div></div>
+                  <p class="d-row"><span class="meter lvl-2" title="medium effort"><i></i><i></i><i></i><i></i><i></i><b>medium effort</b></span></p>
+                  <p class="d-why"><b>Why this effort:</b> Wide and shallow; anything it flags is checked by verifier.</p>
+                  <p class="d-meta">Sonnet · reads and searches, can't edit</p>
+                  <p class="d-try">Try: “Use auditor to sweep analysis/ for anything odd.”</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="7" width="8" height="12" rx="4"/><path d="M12 7V5M9.5 5.5 8 4M14.5 5.5 16 4M8 11H4M8 15H4.5M16 11h4M16 15h3.5M12 11v8"/></svg><span class="tile-name">bug-hunter</span><span class="meter lvl-2" title="medium effort"><i></i><i></i><i></i><i></i><i></i></span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="7" width="8" height="12" rx="4"/><path d="M12 7V5M9.5 5.5 8 4M14.5 5.5 16 4M8 11H4M8 15H4.5M16 11h4M16 15h3.5M12 11v8"/></svg><div><h5>bug-hunter</h5><p>Real defects: wrong logic, unhandled edge cases, silent failures.</p></div></div>
+                  <p class="d-row"><span class="meter lvl-2" title="medium effort"><i></i><i></i><i></i><i></i><i></i><b>medium effort</b></span></p>
+                  <p class="d-why"><b>Why this effort:</b> Finds candidates; verifier decides which are real.</p>
+                  <p class="d-meta">Sonnet · reads and searches, can't edit</p>
+                  <p class="d-try">Try: “Have bug-hunter look for silent failures in the parsing scripts.”</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M4 12h5M13 12h7"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/><circle cx="11" cy="12" r="2"/></svg><span class="tile-name">config-auditor</span><span class="meter lvl-2" title="medium effort"><i></i><i></i><i></i><i></i><i></i></span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M4 12h5M13 12h7"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/><circle cx="11" cy="12" r="2"/></svg><div><h5>config-auditor</h5><p>Magic numbers, hardcoded thresholds, undocumented knobs.</p></div></div>
+                  <p class="d-row"><span class="meter lvl-2" title="medium effort"><i></i><i></i><i></i><i></i><i></i><b>medium effort</b></span></p>
+                  <p class="d-why"><b>Why this effort:</b> Lists knobs and asks whether each is justified; little depth needed per item.</p>
+                  <p class="d-meta">Sonnet · reads and searches, can't edit</p>
+                  <p class="d-try">Try: “Which thresholds in this workflow are hardcoded? Use config-auditor.”</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20v-9a6 6 0 0 1 12 0v9l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5z"/><path d="M10 11h.01M14 11h.01"/></svg><span class="tile-name">dead-code-finder</span><span class="meter lvl-1" title="low effort"><i></i><i></i><i></i><i></i><i></i></span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20v-9a6 6 0 0 1 12 0v9l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5z"/><path d="M10 11h.01M14 11h.01"/></svg><div><h5>dead-code-finder</h5><p>Unreachable, unused, duplicated and orphaned code.</p></div></div>
+                  <p class="d-row"><span class="meter lvl-1" title="low effort"><i></i><i></i><i></i><i></i><i></i><b>low effort</b></span></p>
+                  <p class="d-why"><b>Why this effort:</b> Mostly mechanical: is this used anywhere?</p>
+                  <p class="d-meta">Sonnet · reads and searches, can't edit</p>
+                  <p class="d-try">Try: “Use dead-code-finder on scripts/ before I clean up.”</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14l2 2 4-4"/></svg><span class="tile-name">doc-auditor</span><span class="meter lvl-1" title="low effort"><i></i><i></i><i></i><i></i><i></i></span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14l2 2 4-4"/></svg><div><h5>doc-auditor</h5><p>Docs against the code: drift, contradictions, dead references.</p></div></div>
+                  <p class="d-row"><span class="meter lvl-1" title="low effort"><i></i><i></i><i></i><i></i><i></i><b>low effort</b></span></p>
+                  <p class="d-why"><b>Why this effort:</b> Mostly mechanical: does the text still match the code?</p>
+                  <p class="d-meta">Sonnet · reads and searches, can't edit</p>
+                  <p class="d-try">Try: “Have doc-auditor check README.md against the code.”</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg><span class="tile-name">verifier</span><span class="meter lvl-3" title="high effort"><i></i><i></i><i></i><i></i><i></i></span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg><div><h5>verifier</h5><p>Takes one finding at a time and tries to prove it wrong.</p></div></div>
+                  <p class="d-row"><span class="meter lvl-3" title="high effort"><i></i><i></i><i></i><i></i><i></i><b>high effort</b></span></p>
+                  <p class="d-why"><b>Why this effort:</b> The last check before you: a wrong “confirmed” costs more than a slower answer.</p>
+                  <p class="d-meta">Sonnet · reads and searches, can't edit</p>
+                  <p class="d-try">Try: “Run each finding through verifier before you show me.”</p>
+                </div></li>
+            </ul>
+            <div class="inspect-panel" data-inspect-panel aria-live="polite"></div>
+          </div>
+
+          <h4 class="pipe-h">Why their effort differs</h4>
+          <div class="pipeline">
+            <div class="pipe-stage">
+              <span class="pipe-icons"><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h8M4 10h5M4 14h4"/><circle cx="15.5" cy="13.5" r="4"/><path d="m18.5 16.5 2.5 2.5"/></svg><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="7" width="8" height="12" rx="4"/><path d="M12 7V5M9.5 5.5 8 4M14.5 5.5 16 4M8 11H4M8 15H4.5M16 11h4M16 15h3.5M12 11v8"/></svg><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M4 12h5M13 12h7"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/><circle cx="11" cy="12" r="2"/></svg><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 20v-9a6 6 0 0 1 12 0v9l-2-1.5-2 1.5-2-1.5-2 1.5-2-1.5z"/><path d="M10 11h.01M14 11h.01"/></svg><svg class="ic sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 14l2 2 4-4"/></svg></span>
+              <p><b>Five finders</b><span class="meter lvl-2" title="low or medium effort"><i></i><i></i><i></i><i></i><i></i><b>low or medium effort</b></span><span>Sweep wide and flag anything suspicious. Low or medium effort is enough, because nothing they say reaches you unchecked.</span></p>
+            </div>
+            <svg class="pipe-arrow" viewBox="0 0 40 12" aria-hidden="true"><path d="M0 6h36M31 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="pipe-stage key">
+              <span class="pipe-icons"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="m9 12 2 2 4-4"/></svg></span>
+              <p><b>verifier</b><span class="meter lvl-3" title="high effort"><i></i><i></i><i></i><i></i><i></i><b>high effort</b></span><span>Tries to refute each finding. High effort, because it is the check.</span></p>
+            </div>
+            <svg class="pipe-arrow" viewBox="0 0 40 12" aria-hidden="true"><path d="M0 6h36M31 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="pipe-stage">
+              <span class="pipe-icons"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>
+              <p><b>You</b><span>See only what survived. The harness's CLAUDE.md requires this route for every finding.</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>Skills</h3>
+          <p>Procedures you start yourself by typing <code>/name</code>. Apart from <code>/setup</code>, Claude never starts them on its own.</p>
+          <div class="inspect split" data-inspect>
+            <ul class="tiles">
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/></svg><span class="tile-name">/setup</span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/></svg><div><h5>/setup</h5><p>Maps out the project, checks the guards, then removes the gate.</p></div></div>
+                  <p class="d-why"><b>Use it:</b> Once, right after copying the harness (Setup, step 5).</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01M12 7h4M12 17h4"/></svg><span class="tile-name">/sbatch-run</span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01M12 7h4M12 17h4"/></svg><div><h5>/sbatch-run</h5><p>Submits to Slurm the right way: one job, a background watcher, then acts on the result.</p></div></div>
+                  <p class="d-why"><b>Use it:</b> Whenever something should run on a compute node.</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="3"/><path d="M12 16v5M12 10V3M9 6l3-3 3 3"/></svg><span class="tile-name">/commit-push-pr</span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="3"/><path d="M12 16v5M12 10V3M9 6l3-3 3 3"/></svg><div><h5>/commit-push-pr</h5><p>Stages, commits in the repo's style, and pushes the branch.</p></div></div>
+                  <p class="d-why"><b>Use it:</b> When a change is done and should go to the remote. Needs git.</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9.5" y="12" width="5" height="4" rx="1"/><path d="M10.5 12v-1a1.5 1.5 0 0 1 3 0v1"/></svg><span class="tile-name">/root-lock</span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><rect x="9.5" y="12" width="5" height="4" rx="1"/><path d="M10.5 12v-1a1.5 1.5 0 0 1 3 0v1"/></svg><div><h5>/root-lock</h5><p>Checks that Claude is confined to the project folder and lists what it may touch.</p></div></div>
+                  <p class="d-why"><b>Use it:</b> When you want to see the boundary for yourself.</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5 12 6l2.5-1.5M9.5 19.5 12 18l2.5 1.5"/></svg><span class="tile-name">/niflheim-docs</span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M9.5 4.5 12 6l2.5-1.5M9.5 19.5 12 18l2.5 1.5"/></svg><div><h5>/niflheim-docs</h5><p>Re-reads the Niflheim docs and reports where RUNBOOK.md has drifted.</p></div></div>
+                  <p class="d-why"><b>Use it:</b> Now and then; the doc_check hook reminds you.</p>
+                </div></li>
+              <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h4"/></svg><span class="tile-name">/harness-docs</span></button>
+                <div class="detail">
+                  <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5M8 7h6M8 11h4"/></svg><div><h5>/harness-docs</h5><p>Re-reads the Claude Code best practices and changelog and reports where the harness has drifted.</p></div></div>
+                  <p class="d-why"><b>Use it:</b> Now and then; the doc_check hook reminds you.</p>
+                </div></li>
+            </ul>
+            <div class="inspect-panel" data-inspect-panel aria-live="polite"></div>
+          </div>
         </div>
 
         <div class="sub">
@@ -1501,39 +1679,11 @@ Settings: reference/gpaw.md</code></pre>
             <div role="listitem"><code>└─ .claude/</code><span></span></div>
             <div role="listitem"><code>   ├─ settings.json</code><span>Wires up the hooks; 16 allow and 7 deny rules (no <code>~/.ssh</code>, no <code>.env</code>); a sandbox that keeps commands in the project.</span></div>
             <div role="listitem"><code>   ├─ rules/</code><span><code>data-integrity.md</code>: never fabricate a value. <code>/setup</code> adds <code>project.md</code> with this project's facts.</span></div>
-            <div role="listitem"><code>   ├─ agents/</code><span>6 subagents, below.</span></div>
-            <div role="listitem"><code>   ├─ skills/</code><span>6 skills, below.</span></div>
+            <div role="listitem"><code>   ├─ agents/</code><span>The 6 subagents above.</span></div>
+            <div role="listitem"><code>   ├─ skills/</code><span>The 6 skills above.</span></div>
             <div role="listitem"><code>   ├─ hooks/</code><span>The 13 hooks above, plus <code>test_hooks.sh</code>, which tries to get past every guard.</span></div>
             <div role="listitem"><code>   ├─ bin/loginpy</code><span>Runs Python on a login node with threads and CPU time capped.</span></div>
             <div role="listitem"><code>   └─ setup/</code><span>The setup gate and its checklist. Deleted when <code>/setup</code> finishes.</span></div>
-          </div>
-        </div>
-
-        <div class="sub">
-          <h3>Subagents</h3>
-          <p>Each works in its own context and sends back a short report, so the reading doesn't fill yours. Claude picks one when it fits, or you ask by name. All six run on Sonnet and can only read and search: none can edit files.</p>
-          <p>Their effort differs by job. The five that look for problems run at low or medium effort: they sweep widely, and whatever they report gets checked. <b>verifier</b> runs at high effort, because it is the check: <code>CLAUDE.md</code> sends every finding through it before it reaches you.</p>
-          <div class="cards">
-            <div class="card"><b>auditor</b><em class="eff eff-medium">medium effort</em><span>Broad sweep over a module or folder: coverage, not depth.</span></div>
-            <div class="card"><b>bug-hunter</b><em class="eff eff-medium">medium effort</em><span>Real defects: wrong logic, unhandled edge cases, silent failures.</span></div>
-            <div class="card"><b>config-auditor</b><em class="eff eff-medium">medium effort</em><span>Magic numbers, hardcoded thresholds, undocumented knobs.</span></div>
-            <div class="card"><b>dead-code-finder</b><em class="eff eff-low">low effort</em><span>Unreachable, unused, duplicated and orphaned code.</span></div>
-            <div class="card"><b>doc-auditor</b><em class="eff eff-low">low effort</em><span>Docs against the code: drift, contradictions, dead references.</span></div>
-            <div class="card"><b>verifier</b><em class="eff eff-high">high effort</em><span>Tries to refute each finding before it reaches you.</span></div>
-          </div>
-          <p class="or">e.g. <i>“Use bug-hunter on analysis/ and have verifier check each finding.”</i></p>
-        </div>
-
-        <div class="sub">
-          <h3>Skills</h3>
-          <p>Procedures you start yourself with <code>/name</code>. Apart from <code>/setup</code>, Claude never starts them on its own.</p>
-          <div class="cards">
-            <div class="card"><b>/setup</b><span>One time: maps out the project, checks the guards, then removes the gate.</span></div>
-            <div class="card"><b>/sbatch-run</b><span>Submits to Slurm the right way: one job, a background watcher, then acts on the result.</span></div>
-            <div class="card"><b>/commit-push-pr</b><span>Stages, commits in the repo's style, and pushes the branch.</span></div>
-            <div class="card"><b>/root-lock</b><span>Checks that Claude is confined to the project folder.</span></div>
-            <div class="card"><b>/niflheim-docs</b><span>Re-reads the Niflheim docs and reports where RUNBOOK.md has drifted.</span></div>
-            <div class="card"><b>/harness-docs</b><span>Re-reads the Claude Code best practices and changelog and reports drift.</span></div>
           </div>
         </div>
       </div>
@@ -1893,6 +2043,30 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
         f.setAttribute("src", f.getAttribute("data-src"));
       });
     });
+  });
+
+  /* ---------- Inspectors: point at, focus or tap an item to show its details in one panel ---------- */
+  document.querySelectorAll("[data-inspect]").forEach(function (box) {
+    var panel = box.querySelector("[data-inspect-panel]");
+    var items = Array.prototype.slice.call(box.querySelectorAll("[data-item]"));
+    var timer = null;
+    function show(item) {
+      clearTimeout(timer);
+      items.forEach(function (b) { b.setAttribute("aria-pressed", b === item ? "true" : "false"); });
+      panel.innerHTML = item.parentElement.querySelector(".detail").innerHTML;
+    }
+    items.forEach(function (b) {
+      b.addEventListener("click", function () { show(b); });
+      b.addEventListener("focus", function () { show(b); });
+      // A short delay, so sweeping the pointer across other items on the way to the panel doesn't switch it.
+      b.addEventListener("pointerenter", function (e) {
+        if (e.pointerType !== "mouse") return;
+        clearTimeout(timer);
+        timer = setTimeout(function () { show(b); }, 140);
+      });
+      b.addEventListener("pointerleave", function () { clearTimeout(timer); });
+    });
+    show(items[0]);
   });
 
   /* ---------- Exercise progress (this browser only) ---------- */
