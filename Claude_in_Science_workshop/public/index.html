@@ -404,6 +404,8 @@ details.more .more-body { display: grid; gap: 12px; padding: 0 16px 16px; min-wi
 .figure { margin: 0; display: grid; gap: 8px; min-width: 0; }
 .figure img { border-radius: 8px; border: 1px solid var(--line); background: #fff; }
 .figure figcaption { font-size: var(--step--1); color: var(--muted); }
+.embed { display: block; width: 100%; height: 640px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+.static-fig { max-width: 420px; }
 .ba { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; }
 .ba .arrow { color: var(--accent); width: 28px; height: 28px; }
 @media (max-width: 640px) {
@@ -919,17 +921,6 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
           </div>
           <div class="ex-body">
             <p>Turn a static plot into an interactive one. Start with the example below: the data behind Fig. 3 of Karlsson et al. (2026), which Claude downloads itself (<a href="data/fig3_ml_binding_energies.csv" target="_blank" rel="noopener">fig3_ml_binding_energies.csv</a>). Then try an old plot of your own: give Claude the data or the script that made it, not a screenshot.</p>
-            <div class="ba">
-              <figure class="figure">
-                <img src="img/plot_before.webp" alt="Static matplotlib scatter of ΔE_CO* against ΔE_H* with labelled metals." width="596" height="528">
-                <figcaption>Before: static scatter of ΔE<sub>CO*</sub> vs ΔE<sub>H*</sub></figcaption>
-              </figure>
-              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-              <figure class="figure">
-                <img src="img/plot_after.webp" alt="Interactive Plotly version of the same scatter with a hover box showing one material's details." width="900" height="754">
-                <figcaption>After: interactive Plotly, hover shows each material</figcaption>
-              </figure>
-            </div>
             <figure class="prompt">
               <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
               <p class="prompt-text">Download fig3_ml_binding_energies.csv from https://haraldsr.github.io/claude-in-science/data/fig3_ml_binding_energies.csv. It has the data behind Fig. 3 of Karlsson et al., Electrochim. Acta 549, 148053 (2026). The lines at the top starting with # describe the data, so read them first, and load it with pandas using comment="#". Make two versions of the figure from it:
@@ -942,6 +933,15 @@ Write one Python script that makes both versions, run it, and open the HTML so w
             <ul class="checklist">
               <li>On Niflheim there is no browser to open the HTML in. In VS Code, right-click the file in the Explorer and choose <b>Download…</b>; from a terminal, copy it to your laptop with <code>scp</code>.</li>
             </ul>
+            <h4>What the prompt makes</h4>
+            <figure class="figure">
+              <iframe class="embed" data-src="examples/fig3/fig3_interactive.html" title="Interactive Fig. 3: hover a point, highlight the Cu circle, or search"></iframe>
+              <figcaption>The interactive version, live: hover a point, tick the Cu-circle box, or search for a formula or mp-id such as <code>mp-9929</code>. <a href="examples/fig3/fig3_interactive.html" target="_blank" rel="noopener">Open full screen</a> · <a href="examples/fig3/make_fig3.py" target="_blank" rel="noopener">the script that made both</a></figcaption>
+            </figure>
+            <figure class="figure static-fig">
+              <img src="examples/fig3/fig3_static.png" alt="Static version: grey dots for materials, coloured and labelled metal references, and a dashed circle around Cu." width="1050" height="1050" loading="lazy">
+              <figcaption>The static version (matplotlib PNG).</figcaption>
+            </figure>
           </div>
         </article>
 
@@ -1757,6 +1757,12 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
     document.querySelectorAll(".ex").forEach(function (e) {
       e.classList.toggle("is-shown", e.id === shownEx);
     });
+    // Embedded examples are large, so they load only once their exercise is on screen.
+    if (view === "exercises") {
+      document.querySelectorAll("#" + shownEx + " iframe[data-src]:not([src])").forEach(function (f) {
+        f.setAttribute("src", f.getAttribute("data-src"));
+      });
+    }
     links.forEach(function (a, j) {
       if (j === i) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });

@@ -3,7 +3,10 @@
 Static companion site for the CatTheory & CAMD workshop. No build step: everything is in `public/`.
 
 - `public/index.html` is the whole page (HTML, CSS and JS in one file).
-- `public/img/` holds the five figures used in the exercises.
+- `public/img/` holds the figures used in the exercises (`volcano.png` is the copy Claude downloads in exercise 2).
+- `public/data/` and `public/examples/` hold exercise material served from the site: the Fig. 3 data for
+  exercise 3, the example result for it (`examples/fig3/`, made by `make_fig3.py`; rerun it to rebuild),
+  and the example talk for exercise 4.
 - `qr/` holds QR codes for the published page, for slides and handouts (not part of the site):
   `qr-code` has a CO-on-a-surface icon in the centre, `qr-code-github` the GitHub mark.
   `qr/make_qr.py` regenerates them; its docstring says how, and how to add another logo.
