@@ -520,6 +520,45 @@ svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
 .two > * { min-width: 0; }
 .stack { display: grid; gap: 14px; align-content: start; }
 
+/* ---------- Harness ---------- */
+.tab-plain > .sub:first-child { margin-top: 20px; }
+.legend i.k-ctx { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.legend i.k-demand { background: var(--bg); border: 1px dashed var(--muted); }
+.legend i.k-hook { background: var(--code-bg); }
+.lanes { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); counter-reset: none; }
+@media (min-width: 640px) { .lanes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1040px) { .lanes { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.lanes > li { margin: 0; }
+.lane { background: var(--surface); border-radius: var(--radius); padding: 14px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.lane-h { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); }
+.lane-h span {
+  width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: var(--accent); color: var(--on-accent); font-size: var(--step--1); font-weight: 800;
+}
+.lane ul { list-style: none; padding: 0; display: grid; gap: 6px; }
+.lane li { margin: 0; padding: 8px 10px; border-radius: 6px; font-size: var(--step--1); line-height: 1.4; display: grid; gap: 1px; }
+.lane li b { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; overflow-wrap: anywhere; }
+.lane li.k-ctx { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.lane li.k-ctx b { color: var(--accent); }
+.lane li.k-demand { background: var(--bg); border: 1px dashed var(--muted); }
+.lane li.k-hook { background: var(--code-bg); color: var(--code-muted); }
+.lane li.k-hook b { color: var(--code-ink); }
+.lane-note { font-size: var(--step--1); color: var(--muted); }
+.tree { display: grid; border-top: 1px solid var(--line); }
+.tree > div {
+  display: grid; grid-template-columns: minmax(150px, 14rem) minmax(0, 1fr); gap: 2px 20px;
+  padding: 8px 0; border-bottom: 1px solid var(--line); font-size: var(--step-0);
+}
+.tree > div > code { white-space: pre; background: none; padding: 0; color: var(--accent); font-weight: 600; font-size: 0.84rem; }
+@media (max-width: 560px) { .tree > div { grid-template-columns: minmax(0, 1fr); } }
+.cards { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.card { background: var(--surface); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 4px; align-content: start; font-size: var(--step-0); min-width: 0; }
+.card b { font-family: var(--font-mono); font-size: 0.86rem; color: var(--accent); overflow-wrap: anywhere; }
+.card span { color: var(--muted); }
+.bundles th small { display: block; font-family: var(--font-body); font-weight: 400; letter-spacing: 0; color: var(--muted); margin-top: 2px; }
+.bundles th code { font-size: 0.9rem; }
+.bundles td.pick { background: var(--accent-soft); color: var(--accent); font-weight: 700; padding-left: 12px; }
+
 /* ---------- Niflheim ---------- */
 .facts { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .fact { background: var(--surface); border-radius: var(--radius); padding: 16px 18px; display: grid; gap: 6px; align-content: start; font-size: var(--step-0); }
@@ -602,6 +641,7 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
         <li><a href="#models">Models &amp; effort</a></li>
         <li><a href="#sessions">Sessions</a></li>
         <li><a href="#skills">Skills</a></li>
+        <li><a href="#harness">Harness</a></li>
         <li><a href="#niflheim">Niflheim</a></li>
         <li><a href="#marimo">marimo</a></li>
         <li><a href="#cheatsheet">Cheat sheet</a></li>
@@ -704,7 +744,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
               </div>
             </div>
           </div>
-          <p class="or">Replace <code>~/my-project/</code> with your own folder name. Use a new, empty one: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Adding it to an existing project? Follow Install in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
+          <p class="or">Replace <code>~/my-project/</code> with your own folder name. Use a new, empty one: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Adding it to an existing project? Follow Install in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>. What is inside: see <a href="#harness">Harness</a>.</p>
         </div>
       </li>
 
@@ -1367,6 +1407,186 @@ Settings: reference/gpaw.md</code></pre>
           <li><b>Scripts run;</b> only their output enters context.</li>
           <li>Run it yourself: <code>/gpaw-convergence</code></li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ================= HARNESS ================= -->
+  <section class="section" id="harness" aria-labelledby="har-h">
+    <div class="section-head">
+      <p class="eyebrow">Reference · The workshop harness</p>
+      <h2 id="har-h">What's in the harness</h2>
+      <p>The <code>hands-on/niflheim</code> bundle you copied in Setup. Each piece acts at a different moment: some is read every session, some only when a task needs it, and the hooks are scripts that run on their own and can block a step.</p>
+    </div>
+
+    <div class="tabs" data-tabs>
+      <div class="tablist" role="tablist" aria-label="Harness">
+        <button type="button" role="tab" id="tab-har-main" aria-controls="panel-har-main" aria-selected="true">The workshop bundle</button>
+        <button type="button" role="tab" id="tab-har-diff" aria-controls="panel-har-diff" aria-selected="false" tabindex="-1">How the four bundles differ</button>
+      </div>
+
+      <div class="tab-plain" role="tabpanel" id="panel-har-main" aria-labelledby="tab-har-main">
+        <div class="sub">
+          <h3>When each piece acts</h3>
+          <div class="legend">
+            <span><i class="k-ctx"></i>Read into context</span>
+            <span><i class="k-demand"></i>Loaded on demand</span>
+            <span><i class="k-hook"></i>Hook: a script that runs automatically</span>
+          </div>
+          <ol class="lanes">
+            <li class="lane">
+              <p class="lane-h"><span>1</span>Session start</p>
+              <ul>
+                <li class="k-ctx"><b>CLAUDE.md</b>the rules of conduct</li>
+                <li class="k-ctx"><b>LESSONS.md</b>what went wrong here before; imported by CLAUDE.md</li>
+                <li class="k-ctx"><b>.claude/rules/</b>project.md from /setup, and data-integrity.md</li>
+                <li class="k-hook"><b>node_facts</b>reads this login node's limits, live</li>
+                <li class="k-hook"><b>slurm_alloc</b>partition state, and where the submit template is</li>
+                <li class="k-hook"><b>setup_gate</b>says so if /setup is still pending</li>
+                <li class="k-hook"><b>doc_check</b>monthly nudge to re-check the docs</li>
+              </ul>
+            </li>
+            <li class="lane">
+              <p class="lane-h"><span>2</span>When the task needs it</p>
+              <ul>
+                <li class="k-demand"><b>Skills</b>you run them as /name</li>
+                <li class="k-demand"><b>Subagents</b>Claude hands off a big read and gets a summary back</li>
+                <li class="k-demand"><b>RUNBOOK.md</b>the cluster reference, read when running things</li>
+                <li class="k-demand"><b>Folder CLAUDE.md</b>loads when Claude works in that folder</li>
+              </ul>
+            </li>
+            <li class="lane">
+              <p class="lane-h"><span>3</span>Every tool call</p>
+              <ul>
+                <li class="k-hook"><b>block_until_setup</b>no edits, and only read-only commands, until /setup is done</li>
+                <li class="k-hook"><b>block_outside_root</b>stays inside the project folder</li>
+                <li class="k-hook"><b>block_login_node</b>no compute on the login node; use sbatch</li>
+                <li class="k-hook"><b>block_rm_rf</b>no rm -rf</li>
+                <li class="k-hook"><b>block_destructive_git</b>no history-rewriting git without asking</li>
+                <li class="k-hook"><b>ruff_format</b>formats Python after each edit</li>
+              </ul>
+              <p class="lane-note">The allow and deny rules and the sandbox in settings.json apply here too.</p>
+            </li>
+            <li class="lane">
+              <p class="lane-h"><span>4</span>End of turn</p>
+              <ul>
+                <li class="k-hook"><b>stop_untracked_gate</b>won't finish with stray new files lying around</li>
+                <li class="k-hook"><b>stop_autocommit</b>commits changed tracked files; pushes only if you turn it on</li>
+                <li class="k-hook"><b>audit_lessons</b>daily nudge about open items in LESSONS.md</li>
+              </ul>
+              <p class="lane-note">The first two need git and switch themselves off without it.</p>
+            </li>
+          </ol>
+        </div>
+
+        <div class="sub">
+          <h3>What is what</h3>
+          <div class="tree" role="list">
+            <div role="listitem"><code>my-project/</code><span></span></div>
+            <div role="listitem"><code>├─ CLAUDE.md</code><span>Rules of conduct: hard constraints, how to work, verify before reporting. The same in every project.</span></div>
+            <div role="listitem"><code>├─ LESSONS.md</code><span>This project's log: what went wrong, and the rule that came out of it. Claude adds to it after a correction.</span></div>
+            <div role="listitem"><code>├─ RUNBOOK.md</code><span>How to run things on Niflheim: sbatch, login nodes, partitions, uv, GPAW and ASE, a submit template.</span></div>
+            <div role="listitem"><code>├─ MIGRATION.md</code><span>For installing the harness into a project that already has its own Claude files.</span></div>
+            <div role="listitem"><code>└─ .claude/</code><span></span></div>
+            <div role="listitem"><code>   ├─ settings.json</code><span>Wires up the hooks; 16 allow and 7 deny rules (no <code>~/.ssh</code>, no <code>.env</code>); a sandbox that keeps commands in the project.</span></div>
+            <div role="listitem"><code>   ├─ rules/</code><span><code>data-integrity.md</code>: never fabricate a value. <code>/setup</code> adds <code>project.md</code> with this project's facts.</span></div>
+            <div role="listitem"><code>   ├─ agents/</code><span>6 subagents, below.</span></div>
+            <div role="listitem"><code>   ├─ skills/</code><span>6 skills, below.</span></div>
+            <div role="listitem"><code>   ├─ hooks/</code><span>The 13 hooks above, plus <code>test_hooks.sh</code>, which tries to get past every guard.</span></div>
+            <div role="listitem"><code>   ├─ bin/loginpy</code><span>Runs Python on a login node with threads and CPU time capped.</span></div>
+            <div role="listitem"><code>   └─ setup/</code><span>The setup gate and its checklist. Deleted when <code>/setup</code> finishes.</span></div>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>Subagents</h3>
+          <p>Each works in its own context and sends back a short report, so the reading doesn't fill yours. Claude picks one when it fits, or you ask by name. All six run on Sonnet and can only read and search: none can edit files.</p>
+          <div class="cards">
+            <div class="card"><b>auditor</b><span>Broad sweep over a module or folder: coverage, not depth.</span></div>
+            <div class="card"><b>bug-hunter</b><span>Real defects: wrong logic, unhandled edge cases, silent failures.</span></div>
+            <div class="card"><b>config-auditor</b><span>Magic numbers, hardcoded thresholds, undocumented knobs.</span></div>
+            <div class="card"><b>dead-code-finder</b><span>Unreachable, unused, duplicated and orphaned code.</span></div>
+            <div class="card"><b>doc-auditor</b><span>Docs against the code: drift, contradictions, dead references.</span></div>
+            <div class="card"><b>verifier</b><span>Tries to refute each finding before it reaches you.</span></div>
+          </div>
+          <p class="or">e.g. <i>“Use bug-hunter on analysis/ and have verifier check each finding.”</i></p>
+        </div>
+
+        <div class="sub">
+          <h3>Skills</h3>
+          <p>Procedures you start yourself with <code>/name</code>. Apart from <code>/setup</code>, Claude never starts them on its own.</p>
+          <div class="cards">
+            <div class="card"><b>/setup</b><span>One time: maps out the project, checks the guards, then removes the gate.</span></div>
+            <div class="card"><b>/sbatch-run</b><span>Submits to Slurm the right way: one job, a background watcher, then acts on the result.</span></div>
+            <div class="card"><b>/commit-push-pr</b><span>Stages, commits in the repo's style, and pushes the branch.</span></div>
+            <div class="card"><b>/root-lock</b><span>Checks that Claude is confined to the project folder.</span></div>
+            <div class="card"><b>/niflheim-docs</b><span>Re-reads the Niflheim docs and reports where RUNBOOK.md has drifted.</span></div>
+            <div class="card"><b>/harness-docs</b><span>Re-reads the Claude Code best practices and changelog and reports drift.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-plain" role="tabpanel" id="panel-har-diff" aria-labelledby="tab-har-diff" hidden>
+        <div class="sub">
+          <h3>Two choices: how you work, and where it runs</h3>
+          <p>For after the workshop. The bundles are separate on purpose; the guard hooks and subagents are the same in all four.</p>
+          <div class="table-scroll">
+            <table class="bundles">
+              <thead><tr><th scope="col"></th><th scope="col"><code>generic/</code><small>any machine</small></th><th scope="col"><code>niflheim/</code><small>the DTU cluster</small></th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><code>hands-on/</code><small>you prompt, read, approve</small></th><td>Claude asks before guessing and waits for you</td><td class="pick">This workshop</td></tr>
+                <tr><th scope="row"><code>hands-off/</code><small>you brief it and read the result</small></th><td>Runs unattended; nothing unverified gets committed</td><td>The same, on the cluster</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>generic → niflheim: what the cluster adds</h3>
+          <div class="cards">
+            <div class="card"><b>RUNBOOK.md</b><span>sbatch, login nodes, partitions, GPAW and ASE, the submit template.</span></div>
+            <div class="card"><b>block_login_node</b><span>Hook: no compute on a login node.</span></div>
+            <div class="card"><b>node_facts · slurm_alloc</b><span>Hooks: the login node's limits and the partition state, read live at session start.</span></div>
+            <div class="card"><b>bin/loginpy</b><span>Bounded Python for quick checks on a login node.</span></div>
+            <div class="card"><b>/sbatch-run · /niflheim-docs</b><span>Skills: submit a job properly; check RUNBOOK.md against the docs.</span></div>
+            <div class="card"><b>MIGRATION.md</b><span>Moving an existing project onto the harness.</span></div>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>hands-on → hands-off: when nobody is watching</h3>
+          <p>Hands-on assumes you are there. Hands-off assumes you are not: nothing may wait for you, and nothing unverified becomes a commit.</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col"></th><th scope="col">hands-on</th><th scope="col">hands-off</th></tr></thead>
+              <tbody>
+                <tr><td><b>Permissions</b></td><td>Asks before anything not pre-allowed</td><td>Auto mode: safe actions go ahead; the hooks still deny destructive ones</td></tr>
+                <tr><td><b>A decision only you can make</b></td><td>Claude asks and waits</td><td>Written as an open item in LESSONS.md; Claude carries on with what doesn't depend on it</td></tr>
+                <tr><td><b>Evidence</b></td><td>Shown to you each turn</td><td>In the commit message</td></tr>
+                <tr><td><b>Commit</b></td><td>After the stray-file gate</td><td>Only once your test command passes too (<code>stop_verify_gate</code>)</td></tr>
+                <tr><td><b>Push</b></td><td>Off unless you turn it on</td><td>After every commit</td></tr>
+                <tr><td><b>Loops</b></td><td>—</td><td><code>/maintain</code>: one verified fix per run, e.g. <code>/loop 1d /maintain</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="sub">
+          <h3>Which one to use</h3>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th scope="col">Work</th><th scope="col">Bundle</th><th scope="col">Because</th></tr></thead>
+              <tbody>
+                <tr><td>Developing, refactoring, testing code; docs; cleanup</td><td><code>hands-off/</code></td><td>The tests are the check; a wrong attempt costs minutes</td></tr>
+                <tr><td>Setting up a DFT or MD workflow, choosing parameters, interpreting results, the first run of anything</td><td><code>hands-on/</code></td><td>You are the check; a wrong 24-core, 24-hour job is not cheap</td></tr>
+                <tr><td>Running a proven pipeline over many inputs, resubmitting failures</td><td><code>hands-off/</code> once the checks are mechanical, <code>hands-on/</code> until then</td><td>The check is a script, not a scientist</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="or">In practice it is one per repository: the code package hands-off, the calculations folder next to it hands-on. Details in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
+        </div>
       </div>
     </div>
   </section>
