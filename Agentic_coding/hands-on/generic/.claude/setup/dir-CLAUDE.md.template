@@ -1,0 +1,22 @@
+<!-- A directory CLAUDE.md. Claude Code loads it when it reads a file in this directory, so it
+costs nothing until then. Keep it under ~25 lines: what lives here, the public surface, and
+what a change here must respect. Delete these comments when you fill it in. -->
+
+# <directory name>
+
+<!-- One or two sentences: what this directory is and what it is not. -->
+
+## What's here
+
+<!-- The files or subpackages that matter, one line each. Skip anything self-explanatory. -->
+
+## Conventions
+
+<!-- Only what differs from the rest of the repo or from the language's defaults: naming,
+error handling, how new modules get registered, what must stay importable, layering rules
+(e.g. "nothing here may import from the CLI layer"). -->
+
+## Before changing anything here
+
+<!-- What a change must not break: a public API other code depends on, a file included in the
+package data, a fixture that must stay in sync, a generated file that must be regenerated. -->

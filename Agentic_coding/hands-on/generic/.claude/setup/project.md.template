@@ -1,0 +1,42 @@
+---
+# Rename to project.md once filled in. `/setup` does this for you.
+# No `paths:` key here on purpose: this file loads every session, like CLAUDE.md.
+---
+
+# This project
+
+<!-- One paragraph: what it is and what it is for. Not a sales pitch — the thing a new
+     engineer needs before the file names mean anything. -->
+
+## Layout
+
+<!-- Only the directories that matter, one line each. Not a file listing; Claude can read
+     the tree. Say which are noise, too — generated output, vendored code, fixtures. -->
+
+| Path | Holds |
+|---|---|
+| `src/` | |
+| `tests/` | |
+
+## Commands
+
+<!-- The ones Claude cannot guess, and that YOU HAVE RUN. A wrong command here is worse than
+     no command: it makes "tests pass" unfalsifiable. -->
+
+| Task | Command |
+|---|---|
+| Install | |
+| Test | |
+| Lint / format | |
+| Build | |
+| Run | |
+
+## Entrypoints
+
+<!-- Where execution starts, and the argument that matters. -->
+
+## Gotchas
+
+<!-- The non-obvious things a newcomer gets wrong: an env var that must be set, a service that
+     must be running, a step that looks optional and isn't, a test that needs a fixture built
+     first. This section earns its place; everything above it Claude could mostly infer. -->

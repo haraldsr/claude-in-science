@@ -1,0 +1,10 @@
+This project has not completed Claude Code setup.
+
+While this file exists, a PreToolUse hook denies edits to project source files: the harness
+refuses to start work on a codebase whose context has not been laid out yet.
+
+Run /setup. Its last step runs .claude/setup/release.sh, which deletes this file, the setup
+hooks and the setup skill, and unwires them from settings.json.
+
+To abandon setup instead, run .claude/setup/release.sh yourself. Nothing else in the bundle
+depends on it.

@@ -1,0 +1,7 @@
+# Machine-local Claude Code config — never commit
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
+CLAUDE.local.md
+# One-off scripts, temp files, debug images (CLAUDE.md › Housekeeping)
+scratch/
+.DS_Store

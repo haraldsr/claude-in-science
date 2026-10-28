@@ -1,0 +1,15 @@
+{
+  "_comment": "Machine-local, gitignored. Personal allows and env knobs go HERE, never in settings.json — they go stale and would travel to other machines otherwise. CLAUDE_AUTO_PUSH: 1 makes the Stop hook push after each auto-commit; it is off (0) unless you say so.",
+  "env": {
+    "CLAUDE_AUTO_PUSH": "0"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(env)",
+      "Bash(command -v *)",
+      "Bash(git config *)",
+      "Bash(git check-ignore *)",
+      "Bash(gh auth *)"
+    ]
+  }
+}

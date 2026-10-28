@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+# Run Python on a Niflheim login node, BOUNDED so it can neither exhaust your thread quota
+# nor trip the site's CPU-time killer.
+#
+# Why this exists. NumPy, PyTorch, MKL and OpenBLAS each default to ONE THREAD PER CORE. On a
+# 56-core login node a bare `import torch` plus one matmul wants ~56 threads, while the
+# per-user thread cap (`ulimit -u`, varies by node) is shared with your editor's remote
+# server. When pthread_create then fails with EAGAIN, libgomp calls abort() — that is the
+# "SIGABRT for no reason" — and when the SHELL is what cannot fork, the tool returns "Exit
+# code 1" with no output. Pinning every pool to one thread turns ~56 threads into ~5. That is
+# the whole difference. The pre-flight below reads the live cap; nothing here assumes a node.
+#
+# Bounds applied here: thread pools pinned to 1 (LOGINPY_THREADS), wall clock capped
+# (LOGINPY_TIMEOUT, default 120 s), and a pre-flight refusal when the quota is already mostly
+# spent — so the failure arrives as a sentence instead of a silent exit 1.
+#
+# USE FOR   import checks, `--help`, reading a checkpoint's keys, parsing a handful of rows,
+#           a unit test that doesn't touch the heavy stack.
+# NOT FOR   anything needing a GPU (a login node has none), any real dataset, multiprocessing
+#           or DataLoader workers (each worker gets its own pool), or anything over a couple
+#           of minutes. Those go through sbatch — see RUNBOOK.md.
+set -u
+
+case "${1:-}" in
+  ""|-h|--help)
+    cat >&2 <<'USAGE'
+usage: loginpy <script.py|-m module|-c code> [args...]
+
+Runs Python on the login node with every thread pool pinned to 1 and a wall-clock cap.
+For real work use sbatch (see RUNBOOK.md › The submit template, or /sbatch-run).
+
+  LOGINPY_TIMEOUT  seconds before SIGTERM (default 120)
+  LOGINPY_THREADS  value for the *_NUM_THREADS vars (default 1)
+  LOGINPY_PYTHON   interpreter to use (default: ./.venv/bin/python, else `uv run python`)
+USAGE
+    exit 2 ;;
+esac
+
+# Pre-flight: refuse rather than die halfway through with an unexplained abort.
+cap=$(ulimit -u 2>/dev/null || echo unlimited)
+if [ "$cap" != unlimited ] && [ "$cap" -gt 0 ] 2>/dev/null; then
+  used=$(ps -u "${USER:-$(id -un)}" -o nlwp= 2>/dev/null | awk '{s+=$1} END{print s+0}')
+  if [ "${used:-0}" -gt $(( cap * 80 / 100 )) ]; then
+    {
+      printf 'loginpy: refusing to start — %s of %s threads already in use (over 80%%).\n' "$used" "$cap"
+      printf 'A fork here would fail with EAGAIN and abort mid-import. Either free some:\n'
+      printf '  ps -u $USER -o nlwp,comm --sort=-nlwp | head    # usual hog: an IDE remote server\n'
+      printf '  ulimit -u $(ulimit -Hu)                         # raise the soft cap to the hard one\n'
+      printf 'or run the work through sbatch instead.\n'
+    } >&2
+    exit 1
+  fi
+fi
+
+n=${LOGINPY_THREADS:-1}
+export OMP_NUM_THREADS="$n" MKL_NUM_THREADS="$n" OPENBLAS_NUM_THREADS="$n" \
+       NUMEXPR_NUM_THREADS="$n" VECLIB_MAXIMUM_THREADS="$n" \
+       OMP_DYNAMIC=FALSE MKL_DYNAMIC=FALSE TOKENIZERS_PARALLELISM=false
+
+py=()
+proj="${CLAUDE_PROJECT_DIR:-$PWD}"
+if   [ -n "${LOGINPY_PYTHON:-}" ];       then read -r -a py <<< "$LOGINPY_PYTHON"
+elif [ -x "$proj/.venv/bin/python" ];    then py=("$proj/.venv/bin/python")
+elif command -v uv >/dev/null 2>&1;      then py=(uv run python)
+elif command -v python3 >/dev/null 2>&1; then py=(python3)
+else echo "loginpy: no interpreter found (no .venv, no uv, no python3)" >&2; exit 127
+fi
+
+lim=${LOGINPY_TIMEOUT:-120}
+to=()
+if   command -v timeout  >/dev/null 2>&1; then to=(timeout  --signal=TERM --kill-after=10 "$lim")
+elif command -v gtimeout >/dev/null 2>&1; then to=(gtimeout --signal=TERM --kill-after=10 "$lim")
+fi
+
+${to[@]+"${to[@]}"} "${py[@]}" "$@"
+rc=$?
+[ "$rc" = 124 ] && printf 'loginpy: killed at %ss (LOGINPY_TIMEOUT). Too big for a login node — use sbatch.\n' "$lim" >&2
+exit "$rc"

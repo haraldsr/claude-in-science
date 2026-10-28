@@ -1,0 +1,8 @@
+/setup is running.
+
+While this file exists the gate still blocks edits to source files, but Bash is open: verifying
+a build or test command means running it, and that is setup, not work.
+
+/setup writes this file as its first act and .claude/setup/release.sh removes it at the end.
+If setup was abandoned halfway, run .claude/setup/release.sh to clear the gate, or delete this
+file to go back to the stricter phase.
