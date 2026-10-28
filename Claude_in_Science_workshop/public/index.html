@@ -9,8 +9,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Red+Hat+Display:wght@500;700;800&family=Red+Hat+Text:ital,wght@0,400;0,500;0,700;1,400&display=swap">
 <script>
-  /* Set the view classes before first paint so the long page never flashes. */
+  /* Set the view classes and the Setup route before first paint so the page never flashes. */
   document.documentElement.className += " views" + (/^#?(top|program)?$/.test(location.hash) ? " view-home" : "");
+  try { document.documentElement.setAttribute("data-route", localStorage.getItem("claude-in-science:route") === "vscode" ? "vscode" : "terminal"); } catch (e) {}
 </script>
 <style>
 /* Layout: full-bleed DTU-blue masthead holding the program, a sticky section rail,
@@ -309,6 +310,35 @@ main { display: block; }
 .tab-panel ol { display: grid; gap: 6px; }
 .tab-panel li + li { margin: 0; }
 .or { font-size: var(--step-0); color: var(--muted); }
+
+/* Setup route: Terminal or VS Code. With JS only the picked route shows; without JS both do, tagged. */
+.route-q { font-family: var(--font-display); font-weight: 700; font-size: var(--step-2); margin-bottom: 12px; }
+.route-pick { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.route-pick button {
+  display: grid; gap: 4px; align-content: start; text-align: left; cursor: pointer;
+  font: inherit; color: var(--ink); background: var(--bg);
+  border: 2px solid var(--line); border-radius: var(--radius); padding: 14px 18px;
+}
+.route-pick button:hover { border-color: var(--accent); }
+.route-pick b { font-family: var(--font-display); font-size: var(--step-2); }
+.route-pick span { color: var(--muted); font-size: var(--step-0); }
+.route-pick button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); }
+.route-pick button[aria-pressed="true"] b { color: var(--accent); }
+.route-note { margin: 10px 0 22px; }
+.route-block { display: grid; gap: 10px; justify-items: start; min-width: 0; }
+.route-block > * { max-width: 100%; }
+.route-block > .code { justify-self: stretch; }
+.route-block ol { display: grid; gap: 6px; }
+.route-block li + li { margin: 0; }
+.route-tag {
+  font: 700 0.72rem/1 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-soft); padding: 5px 9px; border-radius: 999px;
+}
+[data-route="terminal"] .only-vscode, [data-route="vscode"] .only-terminal { display: none; }
+
+details.more { border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg); }
+details.more summary { cursor: pointer; padding: 12px 16px; font-weight: 500; color: var(--accent); }
+details.more .more-body { display: grid; gap: 12px; padding: 0 16px 16px; min-width: 0; }
 .pair { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
 .pair > * { min-width: 0; }
 .mini-label { font-size: var(--step--1); font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
@@ -584,64 +614,73 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
     <div class="section-head">
       <p class="eyebrow">Before you start</p>
       <h2 id="setup-h">Setup</h2>
-      <p>Do this before the workshop if you can, so the session can go to the exercises.</p>
+      <p>The code and calculation exercises run on Niflheim, so that is where Claude Code goes. Do this before the workshop if you can, so the session can go to the exercises.</p>
     </div>
+
+    <p class="route-q">How do you want to work on Niflheim?</p>
+    <div class="route-pick">
+      <button type="button" data-route-pick="terminal" aria-pressed="true">
+        <b>Terminal</b>
+        <span>SSH in from a terminal on your laptop and run <code>claude</code> in that shell.</span>
+      </button>
+      <button type="button" data-route-pick="vscode" aria-pressed="false">
+        <b>VS Code</b>
+        <span>Connect VS Code to Niflheim with Remote-SSH. The editor, its terminal and the Claude Code panel all run on Niflheim.</span>
+      </button>
+    </div>
+    <p class="or route-note">These are two separate ways in. Both give you the same Claude Code with the same harness, so pick one; you can switch later.</p>
 
     <ol class="steps">
       <li class="step">
         <span class="step-n" aria-hidden="true">1</span>
         <div class="step-body">
-          <h3>Install Claude Code</h3>
-          <p>Run it in a terminal, in VS Code, or in the Claude desktop app. All three are the same Claude Code and read the same harness files, so pick the one you like; on Niflheim, use the terminal install. You need a paid Claude subscription or a Claude Console account, and you sign in the first time you start it. After a terminal install, open a new terminal and check it with <code>claude --version</code>.</p>
-          <div class="tabs" data-tabs>
-            <div class="tablist" role="tablist" aria-label="Install method">
-              <button type="button" role="tab" id="tab-unix" aria-controls="panel-unix" aria-selected="true">macOS · Linux · WSL</button>
-              <button type="button" role="tab" id="tab-ps" aria-controls="panel-ps" aria-selected="false" tabindex="-1">Windows PowerShell</button>
-              <button type="button" role="tab" id="tab-brew" aria-controls="panel-brew" aria-selected="false" tabindex="-1">Homebrew</button>
-              <button type="button" role="tab" id="tab-vscode" aria-controls="panel-vscode" aria-selected="false" tabindex="-1">VS Code</button>
-              <button type="button" role="tab" id="tab-app" aria-controls="panel-app" aria-selected="false" tabindex="-1">Desktop app</button>
-            </div>
-            <div class="code" role="tabpanel" id="panel-unix" aria-labelledby="tab-unix">
+          <h3>Connect to Niflheim</h3>
+          <p>SSH to Niflheim only works from the DTU network. Off campus, connect to the DTU VPN first.</p>
+          <div class="route-block only-terminal">
+            <span class="route-tag">Terminal</span>
+            <div class="code">
               <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
-            </div>
-            <div class="code" role="tabpanel" id="panel-ps" aria-labelledby="tab-ps" hidden>
-              <div class="code-head"><span>powershell</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <pre><code>irm https://claude.ai/install.ps1 | iex</code></pre>
-            </div>
-            <div class="code" role="tabpanel" id="panel-brew" aria-labelledby="tab-brew" hidden>
-              <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <pre><code>brew install --cask claude-code</code></pre>
-            </div>
-            <div class="tab-panel" role="tabpanel" id="panel-vscode" aria-labelledby="tab-vscode" hidden>
-              <ol>
-                <li>Open the Extensions view (<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> on macOS, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> on Windows and Linux), search for <b>Claude Code</b> by Anthropic and click Install. It needs VS Code 1.94 or later, and also works in Cursor.</li>
-                <li>Open your working root as the folder, then start Claude from <b>✻ Claude Code</b> in the status bar (bottom right) or the Command Palette (<b>Claude Code: Open in New Tab</b>), and sign in.</li>
-              </ol>
-              <div class="code">
-                <div class="code-head"><span>or from a terminal</span><button class="copy" type="button" data-copy>Copy</button></div>
-                <pre><code>code --install-extension anthropic.claude-code</code></pre>
-              </div>
-              <p class="or"><a href="https://code.claude.com/docs/en/vs-code" target="_blank" rel="noopener">VS Code extension docs</a></p>
-            </div>
-            <div class="tab-panel" role="tabpanel" id="panel-app" aria-labelledby="tab-app" hidden>
-              <ol>
-                <li>Download Claude for macOS or Windows from <a href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> (Linux is in beta) and install it.</li>
-                <li>Open it, sign in, and click the <b>Code</b> tab.</li>
-                <li>Start a session in your working root.</li>
-              </ol>
-              <p class="or"><a href="https://code.claude.com/docs/en/desktop" target="_blank" rel="noopener">Desktop app docs</a></p>
+              <pre><code>ssh username@slid.fysik.dtu.dk</code></pre>
             </div>
           </div>
-          <p class="or">All install options and troubleshooting: <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">Claude Code docs</a>.</p>
+          <div class="route-block only-vscode">
+            <span class="route-tag">VS Code</span>
+            <ol>
+              <li>Install the <b>Remote - SSH</b> extension by Microsoft from the Extensions view (<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> on macOS, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> on Windows and Linux).</li>
+              <li>Open the Command Palette (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>), run <b>Remote-SSH: Connect to Host…</b> and enter <code>username@slid.fysik.dtu.dk</code>.</li>
+              <li>A new window opens, connected to Niflheim (the host shows in the bottom-left corner). Its terminal (<kbd>Ctrl</kbd>+<kbd>`</kbd>) runs on Niflheim: use it for the commands in the next steps.</li>
+            </ol>
+          </div>
+          <p class="or"><code>slid</code> is one of several login nodes; others are <code>slid2</code>, <code>sylg</code>, <code>thul</code>, <code>vid</code> and <code>svol</code>. Log in to the one that matches the partition you will run on (see the <a href="#niflheim">login node table</a>).</p>
         </div>
       </li>
 
       <li class="step">
         <span class="step-n" aria-hidden="true">2</span>
         <div class="step-body">
+          <h3>Install Claude Code on Niflheim</h3>
+          <div class="route-block only-terminal">
+            <span class="route-tag">Terminal</span>
+            <p>In your Niflheim shell:</p>
+            <div class="code">
+              <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+            </div>
+            <p>Then log out and in again, and check it with <code>claude --version</code>.</p>
+          </div>
+          <div class="route-block only-vscode">
+            <span class="route-tag">VS Code</span>
+            <p>In the window connected to Niflheim, open the Extensions view, search for <b>Claude Code</b> by Anthropic, and install it on the SSH host (the button reads <b>Install in SSH: slid.fysik.dtu.dk</b>). It needs VS Code 1.94 or later.</p>
+          </div>
+          <p class="or">You need a paid Claude subscription or a Claude Console account. The first time you start Claude Code, sign in through the link it gives you, in your laptop's browser. <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">Install docs</a> · <a href="https://code.claude.com/docs/en/vs-code" target="_blank" rel="noopener">VS Code extension docs</a></p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">3</span>
+        <div class="step-body">
           <h3>Get the workshop harness</h3>
-          <p>The harness is the set of Claude files we prepared for the workshop. It comes as four bundles; for the workshop use <code>hands-on/niflheim</code>. Get it from either place and copy the bundle's contents into your working root, the folder you start <code>claude</code> from.</p>
+          <p>The harness is the set of Claude files we prepared for the workshop. It comes as four bundles; for the workshop use <code>hands-on/niflheim</code>. On Niflheim, copy the bundle's contents into your working root, the folder you will start Claude from. Either source works.</p>
           <div class="pair">
             <div>
               <span class="mini-label">From GitHub · <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">Agentic_coding</a></span>
@@ -653,7 +692,7 @@ cp -R claude-in-science/Agentic_coding/hands-on/niflheim/. ~/my-project/</code><
               </div>
             </div>
             <div>
-              <span class="mini-label">On Niflheim · Harald's directory</span>
+              <span class="mini-label">From Harald's directory on Niflheim</span>
               <div class="code">
                 <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
                 <pre><code>mkdir -p ~/my-project
@@ -661,33 +700,80 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
               </div>
             </div>
           </div>
-          <p class="or">Replace <code>~/my-project/</code> with a new, empty working root: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Working only on your laptop? Use <code>hands-on/generic</code>. Adding it to an existing project? Follow Install in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
-        </div>
-      </li>
-
-      <li class="step">
-        <span class="step-n" aria-hidden="true">3</span>
-        <div class="step-body">
-          <h3>Check that Claude sees it</h3>
-          <p>Run the hook test first. The hooks need <code>jq</code> on your PATH; without it they refuse every tool call.</p>
-          <div class="code">
-            <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-            <pre><code>cd ~/my-project &amp;&amp; bash .claude/hooks/test_hooks.sh</code></pre>
-          </div>
-          <p>Every line should say PASS. Then start <code>claude</code> and run <code>/context</code>: the harness's <code>CLAUDE.md</code> should be listed among the files loaded into context. Your first task runs <code>/setup</code>, which maps out the project; until it finishes, Claude will not edit source files.</p>
+          <p class="or">Replace <code>~/my-project/</code> with a new, empty working root: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Adding it to an existing project? Follow Install in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
         </div>
       </li>
 
       <li class="step">
         <span class="step-n" aria-hidden="true">4</span>
         <div class="step-body">
-          <h3>Make sure you can reach Niflheim</h3>
-          <p>SSH to Niflheim only works from the DTU network. Off campus, connect to the DTU VPN first.</p>
+          <h3>Check that Claude sees it</h3>
+          <p>Run the hook test first. The hooks need <code>jq</code> on your PATH; without it they refuse every tool call. Every line should say PASS.</p>
           <div class="code">
             <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-            <pre><code>ssh username@slid.fysik.dtu.dk</code></pre>
+            <pre><code>cd ~/my-project &amp;&amp; bash .claude/hooks/test_hooks.sh</code></pre>
           </div>
-          <p class="or"><code>slid</code> is one of several login nodes; others are <code>slid2</code>, <code>sylg</code>, <code>thul</code>, <code>vid</code> and <code>svol</code>. Log in to the one that matches the partition you will run on (see the <a href="#niflheim">login node table</a>).</p>
+          <div class="route-block only-terminal">
+            <span class="route-tag">Terminal</span>
+            <p>Start <code>claude</code> in <code>~/my-project</code> and run <code>/context</code>.</p>
+          </div>
+          <div class="route-block only-vscode">
+            <span class="route-tag">VS Code</span>
+            <p>Open <code>~/my-project</code> as the folder (<b>File › Open Folder…</b>), start Claude from <b>✻ Claude Code</b> in the status bar, and type <code>/context</code> in its prompt box.</p>
+          </div>
+          <p>The harness's <code>CLAUDE.md</code> should be listed among the files loaded into context. Your first task runs <code>/setup</code>, which maps out the project; until it finishes, Claude will not edit source files.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">5</span>
+        <div class="step-body">
+          <h3>Optional: Claude Code on your laptop</h3>
+          <details class="more">
+            <summary>For work that doesn't need the cluster, such as exercise 4</summary>
+            <div class="more-body">
+              <p>Install it locally in a terminal, in VS Code, or in the Claude desktop app. For the harness on your laptop, copy <code>hands-on/generic</code> instead of <code>hands-on/niflheim</code>.</p>
+              <div class="tabs" data-tabs>
+                <div class="tablist" role="tablist" aria-label="Install on your laptop">
+                  <button type="button" role="tab" id="tab-unix" aria-controls="panel-unix" aria-selected="true">macOS · Linux · WSL</button>
+                  <button type="button" role="tab" id="tab-ps" aria-controls="panel-ps" aria-selected="false" tabindex="-1">Windows PowerShell</button>
+                  <button type="button" role="tab" id="tab-brew" aria-controls="panel-brew" aria-selected="false" tabindex="-1">Homebrew</button>
+                  <button type="button" role="tab" id="tab-vscode" aria-controls="panel-vscode" aria-selected="false" tabindex="-1">VS Code</button>
+                  <button type="button" role="tab" id="tab-app" aria-controls="panel-app" aria-selected="false" tabindex="-1">Desktop app</button>
+                </div>
+                <div class="code" role="tabpanel" id="panel-unix" aria-labelledby="tab-unix">
+                  <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <pre><code>curl -fsSL https://claude.ai/install.sh | bash</code></pre>
+                </div>
+                <div class="code" role="tabpanel" id="panel-ps" aria-labelledby="tab-ps" hidden>
+                  <div class="code-head"><span>powershell</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <pre><code>irm https://claude.ai/install.ps1 | iex</code></pre>
+                </div>
+                <div class="code" role="tabpanel" id="panel-brew" aria-labelledby="tab-brew" hidden>
+                  <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <pre><code>brew install --cask claude-code</code></pre>
+                </div>
+                <div class="tab-panel" role="tabpanel" id="panel-vscode" aria-labelledby="tab-vscode" hidden>
+                  <ol>
+                    <li>In the Extensions view, search for <b>Claude Code</b> by Anthropic and click Install. It also works in Cursor.</li>
+                    <li>Open your working root as the folder, start Claude from <b>✻ Claude Code</b> in the status bar, and sign in.</li>
+                  </ol>
+                  <div class="code">
+                    <div class="code-head"><span>or from a terminal</span><button class="copy" type="button" data-copy>Copy</button></div>
+                    <pre><code>code --install-extension anthropic.claude-code</code></pre>
+                  </div>
+                </div>
+                <div class="tab-panel" role="tabpanel" id="panel-app" aria-labelledby="tab-app" hidden>
+                  <ol>
+                    <li>Download Claude for macOS or Windows from <a href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> (Linux is in beta) and install it.</li>
+                    <li>Open it, sign in, and click the <b>Code</b> tab.</li>
+                    <li>Start a session in your working root.</li>
+                  </ol>
+                  <p class="or"><a href="https://code.claude.com/docs/en/desktop" target="_blank" rel="noopener">Desktop app docs</a></p>
+                </div>
+              </div>
+            </div>
+          </details>
         </div>
       </li>
     </ol>
@@ -1464,6 +1550,24 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
       var ps = root.querySelector("#tab-ps");
       if (ps) select(ps);
     }
+  });
+
+  /* ---------- Setup route: Terminal or VS Code (remembered in this browser) ---------- */
+  var ROUTE = "claude-in-science:route";
+  var routeBtns = document.querySelectorAll("[data-route-pick]");
+  function pickRoute(r) {
+    document.documentElement.setAttribute("data-route", r);
+    routeBtns.forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-route-pick") === r ? "true" : "false");
+    });
+  }
+  pickRoute(document.documentElement.getAttribute("data-route") || "terminal");
+  routeBtns.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var r = b.getAttribute("data-route-pick");
+      pickRoute(r);
+      try { localStorage.setItem(ROUTE, r); } catch (e) {}
+    });
   });
 
   /* ---------- Exercise progress (this browser only) ---------- */
