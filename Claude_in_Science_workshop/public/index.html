@@ -302,6 +302,12 @@ main { display: block; }
 }
 .tablist button[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
 
+.tab-panel {
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 16px 18px; display: grid; gap: 12px; min-width: 0; font-size: var(--step-0);
+}
+.tab-panel ol { display: grid; gap: 6px; }
+.tab-panel li + li { margin: 0; }
 .or { font-size: var(--step-0); color: var(--muted); }
 .pair { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
 .pair > * { min-width: 0; }
@@ -586,12 +592,14 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
         <span class="step-n" aria-hidden="true">1</span>
         <div class="step-body">
           <h3>Install Claude Code</h3>
-          <p>Open a terminal and run the command for your system. Then open a new terminal and check it with <code>claude --version</code>. You need a Claude subscription or an Anthropic Console account; Claude Code asks you to log in the first time you start it.</p>
+          <p>Run it in a terminal, in VS Code, or in the Claude desktop app. All three are the same Claude Code and read the same harness files, so pick the one you like; on Niflheim, use the terminal install. You need a paid Claude subscription or a Claude Console account, and you sign in the first time you start it. After a terminal install, open a new terminal and check it with <code>claude --version</code>.</p>
           <div class="tabs" data-tabs>
-            <div class="tablist" role="tablist" aria-label="Operating system">
+            <div class="tablist" role="tablist" aria-label="Install method">
               <button type="button" role="tab" id="tab-unix" aria-controls="panel-unix" aria-selected="true">macOS · Linux · WSL</button>
               <button type="button" role="tab" id="tab-ps" aria-controls="panel-ps" aria-selected="false" tabindex="-1">Windows PowerShell</button>
               <button type="button" role="tab" id="tab-brew" aria-controls="panel-brew" aria-selected="false" tabindex="-1">Homebrew</button>
+              <button type="button" role="tab" id="tab-vscode" aria-controls="panel-vscode" aria-selected="false" tabindex="-1">VS Code</button>
+              <button type="button" role="tab" id="tab-app" aria-controls="panel-app" aria-selected="false" tabindex="-1">Desktop app</button>
             </div>
             <div class="code" role="tabpanel" id="panel-unix" aria-labelledby="tab-unix">
               <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
@@ -605,8 +613,27 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
               <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
               <pre><code>brew install --cask claude-code</code></pre>
             </div>
+            <div class="tab-panel" role="tabpanel" id="panel-vscode" aria-labelledby="tab-vscode" hidden>
+              <ol>
+                <li>Open the Extensions view (<kbd>Cmd</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> on macOS, <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd> on Windows and Linux), search for <b>Claude Code</b> by Anthropic and click Install. It needs VS Code 1.94 or later, and also works in Cursor.</li>
+                <li>Open your working root as the folder, then start Claude from <b>✻ Claude Code</b> in the status bar (bottom right) or the Command Palette (<b>Claude Code: Open in New Tab</b>), and sign in.</li>
+              </ol>
+              <div class="code">
+                <div class="code-head"><span>or from a terminal</span><button class="copy" type="button" data-copy>Copy</button></div>
+                <pre><code>code --install-extension anthropic.claude-code</code></pre>
+              </div>
+              <p class="or"><a href="https://code.claude.com/docs/en/vs-code" target="_blank" rel="noopener">VS Code extension docs</a></p>
+            </div>
+            <div class="tab-panel" role="tabpanel" id="panel-app" aria-labelledby="tab-app" hidden>
+              <ol>
+                <li>Download Claude for macOS or Windows from <a href="https://claude.com/download" target="_blank" rel="noopener">claude.com/download</a> (Linux is in beta) and install it.</li>
+                <li>Open it, sign in, and click the <b>Code</b> tab.</li>
+                <li>Start a session in your working root.</li>
+              </ol>
+              <p class="or"><a href="https://code.claude.com/docs/en/desktop" target="_blank" rel="noopener">Desktop app docs</a></p>
+            </div>
           </div>
-          <p class="or">Prefer an app? The Claude desktop app includes Claude Code in its Code tab. See the <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">Claude Code docs</a> for all options and install troubleshooting.</p>
+          <p class="or">All install options and troubleshooting: <a href="https://code.claude.com/docs/en/overview" target="_blank" rel="noopener">Claude Code docs</a>.</p>
         </div>
       </li>
 
