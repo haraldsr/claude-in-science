@@ -354,6 +354,8 @@ details.more .more-body { display: grid; gap: 12px; padding: 0 16px 16px; min-wi
 }
 .ex-theme { display: grid; gap: 4px; }
 .ex-theme > small { color: var(--muted); font-size: var(--step--1); margin-bottom: 4px; }
+.ex-theme.later { border-top: 1px solid var(--line); padding-top: 16px; }
+.ex-theme.later .ex-n { color: var(--muted); }
 .ex-nav ul { list-style: none; padding: 0; display: grid; gap: 2px; }
 .ex-nav li { margin: 0; }
 .ex-nav a {
@@ -803,7 +805,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
     <div class="section-head">
       <p class="eyebrow">Hands-on</p>
       <h2 id="ex-h">Exercises</h2>
-      <p>Work through exercises 1 to 5 in order, theme by theme. Exercise 1 shows why everything after it works the way it does. Already use Claude a lot? Exercise 6 is for you. Ticking an exercise off is saved in this browser only.</p>
+      <p>Work through exercises 1 to 4 in order, theme by theme. Exercise 1 shows why everything after it works the way it does. Already use Claude a lot? Exercise 5 is for you. Claude Academy, at the end, is for after the workshop. Ticking an exercise off is saved in this browser only.</p>
     </div>
 
     <div class="ex-layout">
@@ -831,17 +833,17 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
           </ul>
         </div>
         <div class="ex-theme">
-          <p class="eyebrow">Keep learning</p>
-          <small>After the workshop</small>
-          <ul>
-            <li><a href="#ex5" data-ex-link="ex5"><span class="ex-n">5</span>Use Claude Academy</a></li>
-          </ul>
-        </div>
-        <div class="ex-theme">
           <p class="eyebrow">Advanced</p>
           <small>If you already use Claude a lot</small>
           <ul>
-            <li><a href="#ex6" data-ex-link="ex6"><span class="ex-n">6</span>Build something and publish it</a></li>
+            <li><a href="#ex5" data-ex-link="ex5"><span class="ex-n">5</span>Build something and publish it</a></li>
+          </ul>
+        </div>
+        <div class="ex-theme later">
+          <p class="eyebrow">Keep learning</p>
+          <small>After the workshop</small>
+          <ul>
+            <li><a href="#academy" data-ex-link="academy"><span class="ex-n" aria-hidden="true">→</span>Use Claude Academy</a></li>
           </ul>
         </div>
       </nav>
@@ -979,23 +981,10 @@ Write one Python script that makes both versions, run it, and open the HTML so w
         <article class="ex" id="ex5" data-ex="ex5">
           <div class="ex-top">
             <div class="ex-title">
-              <p class="eyebrow">Exercise 5 · Keep learning</p>
-              <h3>Use Claude Academy</h3>
-            </div>
-            <label class="done"><input type="checkbox" id="done-ex5" data-done="ex5"> Done</label>
-          </div>
-          <div class="ex-body">
-            <p>Free, self-paced courses from Anthropic. Good starting points are <a href="https://academy.claude.com/courses/claude-code-101" target="_blank" rel="noopener">Claude Code 101</a> and <a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a>. All courses: <a href="https://academy.claude.com/courses" target="_blank" rel="noopener">academy.claude.com/courses</a>.</p>
-          </div>
-        </article>
-
-        <article class="ex" id="ex6" data-ex="ex6">
-          <div class="ex-top">
-            <div class="ex-title">
-              <p class="eyebrow">Exercise 6 · Advanced</p>
+              <p class="eyebrow">Exercise 5 · Advanced</p>
               <h3>Build something and publish it</h3>
             </div>
-            <label class="done"><input type="checkbox" id="done-ex6" data-done="ex6"> Done</label>
+            <label class="done"><input type="checkbox" id="done-ex5" data-done="ex5"> Done</label>
           </div>
           <div class="ex-body">
             <p>For those who already use Claude a lot. Pick one and take it all the way to something other people can open or reuse. This page is built and hosted the way the first option describes; its source is on <a href="https://github.com/haraldsr/claude-in-science" target="_blank" rel="noopener">GitHub</a>.</p>
@@ -1031,6 +1020,18 @@ Write one Python script that makes both versions, run it, and open the HTML so w
                 </figure>
               </div>
             </div>
+          </div>
+        </article>
+
+        <article class="ex" id="academy" data-ex="academy">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">After the workshop · Keep learning</p>
+              <h3>Use Claude Academy</h3>
+            </div>
+          </div>
+          <div class="ex-body">
+            <p>Not part of today's session, but a good next step afterwards: free, self-paced courses from Anthropic. Good starting points are <a href="https://academy.claude.com/courses/claude-code-101" target="_blank" rel="noopener">Claude Code 101</a> and <a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a>. All courses: <a href="https://academy.claude.com/courses" target="_blank" rel="noopener">academy.claude.com/courses</a>.</p>
           </div>
         </article>
       </div>
