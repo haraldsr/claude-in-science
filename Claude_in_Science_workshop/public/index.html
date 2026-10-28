@@ -555,6 +555,15 @@ svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
 .card { background: var(--surface); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 4px; align-content: start; font-size: var(--step-0); min-width: 0; }
 .card b { font-family: var(--font-mono); font-size: 0.86rem; color: var(--accent); overflow-wrap: anywhere; }
 .card span { color: var(--muted); }
+.card { grid-template-columns: minmax(0, 1fr) auto; }
+.card > span { grid-column: 1 / -1; }
+.eff {
+  font: 600 0.72rem/1 var(--font-mono); font-style: normal; color: var(--ink);
+  padding: 4px 7px; border-radius: 4px; align-self: start; white-space: nowrap;
+}
+.eff-low { background: color-mix(in srgb, var(--accent) 14%, var(--bg)); }
+.eff-medium { background: color-mix(in srgb, var(--accent) 30%, var(--bg)); }
+.eff-high { background: color-mix(in srgb, var(--accent) 52%, var(--bg)); }
 .bundles th small { display: block; font-family: var(--font-body); font-weight: 400; letter-spacing: 0; color: var(--muted); margin-top: 2px; }
 .bundles th code { font-size: 0.9rem; }
 .bundles td.pick { background: var(--accent-soft); color: var(--accent); font-weight: 700; padding-left: 12px; }
@@ -1503,13 +1512,14 @@ Settings: reference/gpaw.md</code></pre>
         <div class="sub">
           <h3>Subagents</h3>
           <p>Each works in its own context and sends back a short report, so the reading doesn't fill yours. Claude picks one when it fits, or you ask by name. All six run on Sonnet and can only read and search: none can edit files.</p>
+          <p>Their effort differs by job. The five that look for problems run at low or medium effort: they sweep widely, and whatever they report gets checked. <b>verifier</b> runs at high effort, because it is the check: <code>CLAUDE.md</code> sends every finding through it before it reaches you.</p>
           <div class="cards">
-            <div class="card"><b>auditor</b><span>Broad sweep over a module or folder: coverage, not depth.</span></div>
-            <div class="card"><b>bug-hunter</b><span>Real defects: wrong logic, unhandled edge cases, silent failures.</span></div>
-            <div class="card"><b>config-auditor</b><span>Magic numbers, hardcoded thresholds, undocumented knobs.</span></div>
-            <div class="card"><b>dead-code-finder</b><span>Unreachable, unused, duplicated and orphaned code.</span></div>
-            <div class="card"><b>doc-auditor</b><span>Docs against the code: drift, contradictions, dead references.</span></div>
-            <div class="card"><b>verifier</b><span>Tries to refute each finding before it reaches you.</span></div>
+            <div class="card"><b>auditor</b><em class="eff eff-medium">medium effort</em><span>Broad sweep over a module or folder: coverage, not depth.</span></div>
+            <div class="card"><b>bug-hunter</b><em class="eff eff-medium">medium effort</em><span>Real defects: wrong logic, unhandled edge cases, silent failures.</span></div>
+            <div class="card"><b>config-auditor</b><em class="eff eff-medium">medium effort</em><span>Magic numbers, hardcoded thresholds, undocumented knobs.</span></div>
+            <div class="card"><b>dead-code-finder</b><em class="eff eff-low">low effort</em><span>Unreachable, unused, duplicated and orphaned code.</span></div>
+            <div class="card"><b>doc-auditor</b><em class="eff eff-low">low effort</em><span>Docs against the code: drift, contradictions, dead references.</span></div>
+            <div class="card"><b>verifier</b><em class="eff eff-high">high effort</em><span>Tries to refute each finding before it reaches you.</span></div>
           </div>
           <p class="or">e.g. <i>“Use bug-hunter on analysis/ and have verifier check each finding.”</i></p>
         </div>
