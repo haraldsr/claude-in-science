@@ -882,10 +882,11 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
                 <li>Use a cheap calculator: EMT, or GPAW in LCAO mode.</li>
                 <li>Try to also submit jobs on Niflheim (not too many!).</li>
                 <li>Be specific to Claude that you want the calculations redone, not values scraped from the image.</li>
+                <li>No need to upload the figure: the prompt gives Claude a link, and it downloads the figure itself.</li>
               </ul>
               <figure class="prompt">
                 <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
-                <p class="prompt-text">Recreate the HER volcano from Nørskov et al., J. Electrochem. Soc. 152, J23 (2005) by running the calculations yourself. Do not read values off the figure. Use EMT on fcc(111) slabs of Cu, Ag, Au, Ni, Pd and Pt, compute the hydrogen adsorption energy, convert it to ΔG_H*, and plot it against the experimental exchange currents from the paper. Submit at most 10 jobs to Niflheim. Make a plan first.</p>
+                <p class="prompt-text">Recreate the HER volcano from Nørskov et al., J. Electrochem. Soc. 152, J23 (2005) by running the calculations yourself. The target figure is at https://haraldsr.github.io/claude-in-science/img/volcano.png: download it into this folder with curl and look at it. Take the experimental exchange currents (log i0) from it, but compute ΔG_H* yourself; do not read those off the figure. Use EMT on fcc(111) slabs of Cu, Ag, Au, Ni, Pd and Pt, compute the hydrogen adsorption energy, convert it to ΔG_H*, and plot it against the experimental exchange currents. Submit at most 10 jobs to Niflheim. Make a plan first.</p>
               </figure>
               <h4>Hints</h4>
               <ul class="checklist">
@@ -896,7 +897,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
             </div>
             <figure class="figure">
               <img src="img/volcano.webp" alt="Volcano diagram of the HER for various metals: log exchange current against hydrogen adsorption free energy, with Pt, Pd and Rh near the top." width="498" height="401">
-              <figcaption>Target: HER volcano from <a href="https://doi.org/10.1149/1.1856988" target="_blank" rel="noopener">Nørskov et al., J. Electrochem. Soc. 152, J23 (2005)</a>.</figcaption>
+              <figcaption>Target: HER volcano from <a href="https://doi.org/10.1149/1.1856988" target="_blank" rel="noopener">Nørskov et al., J. Electrochem. Soc. 152, J23 (2005)</a>. Claude fetches it as <a href="img/volcano.png" target="_blank" rel="noopener">volcano.png</a>.</figcaption>
             </figure>
           </div>
         </article>
