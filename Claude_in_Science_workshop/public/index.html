@@ -801,7 +801,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
     <div class="section-head">
       <p class="eyebrow">Hands-on</p>
       <h2 id="ex-h">Exercises</h2>
-      <p>Work through all five in order, theme by theme. Exercise 1 shows why everything after it works the way it does. Ticking an exercise off is saved in this browser only.</p>
+      <p>Work through exercises 1 to 5 in order, theme by theme. Exercise 1 shows why everything after it works the way it does. Already use Claude a lot? Exercise 6 is for you. Ticking an exercise off is saved in this browser only.</p>
     </div>
 
     <div class="ex-layout">
@@ -833,6 +833,13 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
           <small>After the workshop</small>
           <ul>
             <li><a href="#ex5" data-ex-link="ex5"><span class="ex-n">5</span>Use Claude Academy</a></li>
+          </ul>
+        </div>
+        <div class="ex-theme">
+          <p class="eyebrow">Advanced</p>
+          <small>If you already use Claude a lot</small>
+          <ul>
+            <li><a href="#ex6" data-ex-link="ex6"><span class="ex-n">6</span>Build something and publish it</a></li>
           </ul>
         </div>
       </nav>
@@ -965,6 +972,51 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
           </div>
           <div class="ex-body">
             <p>Free, self-paced courses from Anthropic. Good starting points are <a href="https://academy.claude.com/courses/claude-code-101" target="_blank" rel="noopener">Claude Code 101</a> and <a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a>. All courses: <a href="https://academy.claude.com/courses" target="_blank" rel="noopener">academy.claude.com/courses</a>.</p>
+          </div>
+        </article>
+
+        <article class="ex" id="ex6" data-ex="ex6">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">Exercise 6 · Advanced</p>
+              <h3>Build something and publish it</h3>
+            </div>
+            <label class="done"><input type="checkbox" id="done-ex6" data-done="ex6"> Done</label>
+          </div>
+          <div class="ex-body">
+            <p>For those who already use Claude a lot. Pick one and take it all the way to something other people can open or reuse. This page is built and hosted the way the first option describes; its source is on <a href="https://github.com/haraldsr/claude-in-science" target="_blank" rel="noopener">GitHub</a>.</p>
+            <div class="tabs" data-tabs>
+              <div class="tablist" role="tablist" aria-label="Advanced project">
+                <button type="button" role="tab" id="tab-adv-web" aria-controls="panel-adv-web" aria-selected="true">Website</button>
+                <button type="button" role="tab" id="tab-adv-data" aria-controls="panel-adv-data" aria-selected="false" tabindex="-1">Results explorer</button>
+                <button type="button" role="tab" id="tab-adv-skill" aria-controls="panel-adv-skill" aria-selected="false" tabindex="-1">Your own skill</button>
+              </div>
+              <div class="tab-panel" role="tabpanel" id="panel-adv-web" aria-labelledby="tab-adv-web">
+                <p>A page for your project or group, hosted free on GitHub Pages. You need git and a GitHub account, so this is easiest on your laptop.</p>
+                <figure class="prompt">
+                  <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <p class="prompt-text">Build a single-page website for my project: what it is, two or three key results with figures, and links to the papers and code. Plain HTML, CSS and JS with no build step, and it must work on a phone and in dark mode. Then publish it on GitHub Pages from a new repository, with a GitHub Actions workflow that redeploys on every push, and give me the URL. Make a plan first, and ask me before anything that pushes or publishes.</p>
+                </figure>
+                <ul class="checklist">
+                  <li>Publishing makes it public: keep unpublished results and data out.</li>
+                  <li>Ask Claude to open the page in a browser and check it, not just write it.</li>
+                </ul>
+              </div>
+              <div class="tab-panel" role="tabpanel" id="panel-adv-data" aria-labelledby="tab-adv-data" hidden>
+                <p>Make a folder of calculation results browsable instead of a static plot, and host it the same way as the website.</p>
+                <figure class="prompt">
+                  <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <p class="prompt-text">Turn the results in this folder into an interactive page where I can filter by material and hover over each point to see its structure, energies and job ID. Generate it with a Python script I can rerun when results change, and write it as one self-contained HTML file. Make a plan first.</p>
+                </figure>
+              </div>
+              <div class="tab-panel" role="tabpanel" id="panel-adv-skill" aria-labelledby="tab-adv-skill" hidden>
+                <p>Package a procedure you repeat, such as a convergence test or resubmitting failed jobs, so Claude does it the same way every time. See <a href="https://code.claude.com/docs/en/skills" target="_blank" rel="noopener">Skills</a>.</p>
+                <figure class="prompt">
+                  <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <p class="prompt-text">Write a skill for a k-point convergence test on Niflheim: given a structure, it sets up the calculations, submits them with MyQueue, waits for them, and reports a table of energy against k-points with the converged value marked. Put it in .claude/skills/, then test it in a fresh session and fix what goes wrong.</p>
+                </figure>
+              </div>
+            </div>
           </div>
         </article>
       </div>
