@@ -918,7 +918,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
             <label class="done"><input type="checkbox" id="done-ex3" data-done="ex3"> Done</label>
           </div>
           <div class="ex-body">
-            <p>Find an old plot and make it an interactive Plotly figure, or vibe code a small website for it. Give Claude the data or the script that made the plot, not a screenshot.</p>
+            <p>Turn a static plot into an interactive one. Start with the example below: the data behind Fig. 3 of Karlsson et al. (2026), which Claude downloads itself (<a href="data/fig3_ml_binding_energies.csv" target="_blank" rel="noopener">fig3_ml_binding_energies.csv</a>). Then try an old plot of your own: give Claude the data or the script that made it, not a screenshot.</p>
             <div class="ba">
               <figure class="figure">
                 <img src="img/plot_before.webp" alt="Static matplotlib scatter of ΔE_CO* against ΔE_H* with labelled metals." width="596" height="528">
@@ -931,9 +931,17 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
               </figure>
             </div>
             <figure class="prompt">
-              <div class="prompt-head"><span>Example prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <p class="prompt-text">Here is the script and data behind an old figure of mine. Rebuild it as an interactive Plotly figure saved as a single HTML file. Keep the axes and labels, and show the material name, ID and energies on hover.</p>
+              <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <p class="prompt-text">Download fig3_ml_binding_energies.csv from https://haraldsr.github.io/claude-in-science/data/fig3_ml_binding_energies.csv. It has the data behind Fig. 3 of Karlsson et al., Electrochim. Acta 549, 148053 (2026). The lines at the top starting with # describe the data, so read them first, and load it with pandas using comment="#". Make two versions of the figure from it:
+
+1. Static (matplotlib, saved as PNG): a 7x7 inch scatter of dE_CO_eV (y) against dE_H_eV (x). Draw the 'material' rows as small grey dots (alpha 0.5). Draw the 'metal_reference' rows as dots coloured by label_color, with the metal symbol next to each one in bold black. Add the dashed black circle around the Cu reference, using the centre and radius given in the header. Set the axes to x from -0.5 to 1.0 and y from -2.0 to 0.5, label them ΔE_H* [eV] and ΔE_CO* [eV], and add a light grid.
+2. Interactive (Plotly, one self-contained HTML file): the same plot with the same axes, colours, labels and circle. On hover, show formula, slab_formula, mp_id, ΔE_H, ΔE_CO and the distance to Cu. Add a toggle that highlights only the materials inside the Cu circle (within_Cu_circle == True), and a search box that highlights a material by formula or mp_id.
+
+Write one Python script that makes both versions, run it, and open the HTML so we can check it.</p>
             </figure>
+            <ul class="checklist">
+              <li>On Niflheim there is no browser to open the HTML in. In VS Code, right-click the file in the Explorer and choose <b>Download…</b>; from a terminal, copy it to your laptop with <code>scp</code>.</li>
+            </ul>
           </div>
         </article>
 
@@ -955,7 +963,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
               <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
               <figure class="figure">
                 <img src="img/deck_after.webp" alt="Dark title slide of a deck made from the paper, with slide thumbnails on the left." width="1200" height="569">
-                <figcaption>After: a talk deck made from it</figcaption>
+                <figcaption>After: a talk deck made from it. Open the <a href="examples/co2rr-talk.html" target="_blank" rel="noopener">slides</a> or the <a href="examples/co2rr-talk.pdf" target="_blank" rel="noopener">PDF</a>.</figcaption>
               </figure>
             </div>
             <p class="or">Example: <a href="https://doi.org/10.1016/j.electacta.2025.148053" target="_blank" rel="noopener">Karlsson et al., Exploring the vast landscape of stable materials for CO<sub>2</sub>RR, Electrochim. Acta 549, 148053 (2026)</a>.</p>
