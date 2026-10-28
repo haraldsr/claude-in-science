@@ -920,28 +920,34 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
             <label class="done"><input type="checkbox" id="done-ex3" data-done="ex3"> Done</label>
           </div>
           <div class="ex-body">
-            <p>Turn a static plot into an interactive one. Start with the example below: the data behind Fig. 3 of Karlsson et al. (2026), which Claude downloads itself (<a href="data/fig3_ml_binding_energies.csv" target="_blank" rel="noopener">fig3_ml_binding_energies.csv</a>). Then try an old plot of your own: give Claude the data or the script that made it, not a screenshot.</p>
+            <p>Find an old plot and make it an interactive Plotly figure, or vibe code a small website for it. Give Claude the data or the script that made the plot, not a screenshot. Here is the example we did, Fig. 3 of Karlsson et al. (2026):</p>
+            <figure class="figure static-fig">
+              <img src="img/plot_before.webp" alt="Fig. 3 of Karlsson et al. (2026): static scatter of ΔE_CO* against ΔE_H* for about 1,400 materials, with labelled metals and a dashed circle around Cu." width="596" height="528">
+              <figcaption>The original: Fig. 3 of <a href="https://doi.org/10.1016/j.electacta.2025.148053" target="_blank" rel="noopener">Karlsson et al. (2026)</a>, a static scatter of about 1,400 materials.</figcaption>
+            </figure>
             <figure class="prompt">
-              <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <p class="prompt-text">Download fig3_ml_binding_energies.csv from https://haraldsr.github.io/claude-in-science/data/fig3_ml_binding_energies.csv. It has the data behind Fig. 3 of Karlsson et al., Electrochim. Acta 549, 148053 (2026). The lines at the top starting with # describe the data, so read them first, and load it with pandas using comment="#". Make two versions of the figure from it:
+              <div class="prompt-head"><span>Example prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <p class="prompt-text">Here is the script and data behind an old figure of mine. Rebuild it as an interactive Plotly figure saved as a single HTML file. Keep the axes and labels, and show the material name, ID and energies on hover.</p>
+            </figure>
+            <ul class="checklist">
+              <li>On Niflheim there is no browser to open the HTML in. In VS Code, right-click the file in the Explorer and choose <b>Download…</b>; from a terminal, copy it to your laptop with <code>scp</code>.</li>
+            </ul>
+            <details class="more" data-reveal>
+              <summary>Reveal the interactive result for Fig. 3</summary>
+              <div class="more-body">
+                <iframe class="embed" data-src="examples/fig3/fig3_interactive.html" title="Interactive Fig. 3: hover a point, highlight the Cu circle, or search"></iframe>
+                <p class="or">Hover a point, tick the Cu-circle box, or search for a formula or mp-id such as <code>mp-9929</code>. <a href="examples/fig3/fig3_interactive.html" target="_blank" rel="noopener">Open full screen</a> · <a href="examples/fig3/fig3_static.png" target="_blank" rel="noopener">static version</a> · <a href="examples/fig3/make_fig3.py" target="_blank" rel="noopener">the script that made both</a> · <a href="data/fig3_ml_binding_energies.csv" target="_blank" rel="noopener">the data</a></p>
+                <figure class="prompt">
+                  <div class="prompt-head"><span>The prompt we used</span><button class="copy" type="button" data-copy>Copy</button></div>
+                  <p class="prompt-text">Download fig3_ml_binding_energies.csv from https://haraldsr.github.io/claude-in-science/data/fig3_ml_binding_energies.csv. It has the data behind Fig. 3 of Karlsson et al., Electrochim. Acta 549, 148053 (2026). The lines at the top starting with # describe the data, so read them first, and load it with pandas using comment="#". Make two versions of the figure from it:
 
 1. Static (matplotlib, saved as PNG): a 7x7 inch scatter of dE_CO_eV (y) against dE_H_eV (x). Draw the 'material' rows as small grey dots (alpha 0.5). Draw the 'metal_reference' rows as dots coloured by label_color, with the metal symbol next to each one in bold black. Add the dashed black circle around the Cu reference, using the centre and radius given in the header. Set the axes to x from -0.5 to 1.0 and y from -2.0 to 0.5, label them ΔE_H* [eV] and ΔE_CO* [eV], and add a light grid.
 2. Interactive (Plotly, one self-contained HTML file): the same plot with the same axes, colours, labels and circle. On hover, show formula, slab_formula, mp_id, ΔE_H, ΔE_CO and the distance to Cu. Add a toggle that highlights only the materials inside the Cu circle (within_Cu_circle == True), and a search box that highlights a material by formula or mp_id.
 
 Write one Python script that makes both versions, run it, and open the HTML so we can check it.</p>
-            </figure>
-            <ul class="checklist">
-              <li>On Niflheim there is no browser to open the HTML in. In VS Code, right-click the file in the Explorer and choose <b>Download…</b>; from a terminal, copy it to your laptop with <code>scp</code>.</li>
-            </ul>
-            <h4>What the prompt makes</h4>
-            <figure class="figure">
-              <iframe class="embed" data-src="examples/fig3/fig3_interactive.html" title="Interactive Fig. 3: hover a point, highlight the Cu circle, or search"></iframe>
-              <figcaption>The interactive version, live: hover a point, tick the Cu-circle box, or search for a formula or mp-id such as <code>mp-9929</code>. <a href="examples/fig3/fig3_interactive.html" target="_blank" rel="noopener">Open full screen</a> · <a href="examples/fig3/make_fig3.py" target="_blank" rel="noopener">the script that made both</a></figcaption>
-            </figure>
-            <figure class="figure static-fig">
-              <img src="examples/fig3/fig3_static.png" alt="Static version: grey dots for materials, coloured and labelled metal references, and a dashed circle around Cu." width="1050" height="1050" loading="lazy">
-              <figcaption>The static version (matplotlib PNG).</figcaption>
-            </figure>
+                </figure>
+              </div>
+            </details>
           </div>
         </article>
 
@@ -1648,6 +1654,16 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
     });
   });
 
+  /* ---------- Reveals: embedded examples are large, so they load only when opened ---------- */
+  document.querySelectorAll("details[data-reveal]").forEach(function (d) {
+    d.addEventListener("toggle", function () {
+      if (!d.open) return;
+      d.querySelectorAll("iframe[data-src]:not([src])").forEach(function (f) {
+        f.setAttribute("src", f.getAttribute("data-src"));
+      });
+    });
+  });
+
   /* ---------- Exercise progress (this browser only) ---------- */
   var KEY = "claude-in-science:done";
   var done = {};
@@ -1757,12 +1773,6 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
     document.querySelectorAll(".ex").forEach(function (e) {
       e.classList.toggle("is-shown", e.id === shownEx);
     });
-    // Embedded examples are large, so they load only once their exercise is on screen.
-    if (view === "exercises") {
-      document.querySelectorAll("#" + shownEx + " iframe[data-src]:not([src])").forEach(function (f) {
-        f.setAttribute("src", f.getAttribute("data-src"));
-      });
-    }
     links.forEach(function (a, j) {
       if (j === i) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
