@@ -680,15 +680,15 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
         <span class="step-n" aria-hidden="true">3</span>
         <div class="step-body">
           <h3>Get the workshop harness</h3>
-          <p>The harness is the set of Claude files we prepared for the workshop. It comes as four bundles; for the workshop use <code>hands-on/niflheim</code>. On Niflheim, copy the bundle's contents into your working root, the folder you will start Claude from. Either source works.</p>
+          <p>The harness is the set of Claude files we prepared for the workshop. It comes as four bundles; for the workshop use <code>hands-on/niflheim</code>. In your Niflheim shell, copy the bundle's contents into a new, empty folder: your working root, where you will start Claude. Neither option needs git.</p>
           <div class="pair">
             <div>
-              <span class="mini-label">From GitHub · <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">Agentic_coding</a></span>
+              <span class="mini-label">Download from GitHub · <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">Agentic_coding</a></span>
               <div class="code">
                 <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-                <pre><code>git clone https://github.com/haraldsr/claude-in-science.git
+                <pre><code>curl -fsSL https://github.com/haraldsr/claude-in-science/archive/refs/heads/main.tar.gz | tar -xz
 mkdir -p ~/my-project
-cp -R claude-in-science/Agentic_coding/hands-on/niflheim/. ~/my-project/</code></pre>
+cp -R claude-in-science-main/Agentic_coding/hands-on/niflheim/. ~/my-project/</code></pre>
               </div>
             </div>
             <div>
@@ -700,33 +700,50 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
               </div>
             </div>
           </div>
-          <p class="or">Replace <code>~/my-project/</code> with a new, empty working root: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Adding it to an existing project? Follow Install in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
+          <p class="or">Replace <code>~/my-project/</code> with your own folder name. Use a new, empty one: the copy overwrites any <code>CLAUDE.md</code>, <code>.claude/</code> and <code>.gitignore</code> already there. The trailing <code>/.</code> copies hidden files such as <code>.claude/</code> too. Adding it to an existing project? Follow Install in the <a href="https://github.com/haraldsr/claude-in-science/tree/main/Agentic_coding" target="_blank" rel="noopener">harness README</a>.</p>
         </div>
       </li>
 
       <li class="step">
         <span class="step-n" aria-hidden="true">4</span>
         <div class="step-body">
-          <h3>Check that Claude sees it</h3>
-          <p>Run the hook test first. The hooks need <code>jq</code> on your PATH; without it they refuse every tool call. Every line should say PASS.</p>
+          <h3>Check the guards</h3>
+          <p>The harness's hooks need <code>jq</code> on your PATH; without it they refuse every tool call. Run the hook test; every line should say PASS.</p>
           <div class="code">
             <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
             <pre><code>cd ~/my-project &amp;&amp; bash .claude/hooks/test_hooks.sh</code></pre>
           </div>
-          <div class="route-block only-terminal">
-            <span class="route-tag">Terminal</span>
-            <p>Start <code>claude</code> in <code>~/my-project</code> and run <code>/context</code>.</p>
-          </div>
-          <div class="route-block only-vscode">
-            <span class="route-tag">VS Code</span>
-            <p>Open <code>~/my-project</code> as the folder (<b>File › Open Folder…</b>), start Claude from <b>✻ Claude Code</b> in the status bar, and type <code>/context</code> in its prompt box.</p>
-          </div>
-          <p>The harness's <code>CLAUDE.md</code> should be listed among the files loaded into context. Your first task runs <code>/setup</code>, which maps out the project; until it finishes, Claude will not edit source files.</p>
         </div>
       </li>
 
       <li class="step">
         <span class="step-n" aria-hidden="true">5</span>
+        <div class="step-body">
+          <h3>Set up the harness with <code>/setup</code></h3>
+          <p>A fresh harness is locked: until <code>/setup</code> has finished, Claude can look around but cannot edit files or run commands, so do this before any exercise. <code>/setup</code> asks you about the project, writes what it learns into <code>.claude/rules/project.md</code> and the project section of <code>RUNBOOK.md</code>, checks the guards, and then unlocks.</p>
+          <div class="route-block only-terminal">
+            <span class="route-tag">Terminal</span>
+            <p>Start Claude in your working root:</p>
+            <div class="code">
+              <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <pre><code>cd ~/my-project &amp;&amp; claude</code></pre>
+            </div>
+          </div>
+          <div class="route-block only-vscode">
+            <span class="route-tag">VS Code</span>
+            <p>Open <code>~/my-project</code> as the folder (<b>File › Open Folder…</b>) and start Claude from <b>✻ Claude Code</b> in the status bar.</p>
+          </div>
+          <p>Then send this. We assume no git: your working root is a plain folder, not a git repository, so the prompt says so up front. The harness's auto-commit and stray-file hooks need git and switch themselves off without it.</p>
+          <figure class="prompt">
+            <div class="prompt-head"><span>Prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+            <p class="prompt-text">/setup This is a new, empty folder for the Claude in Science workshop exercises: calculations with ASE and GPAW submitted to Niflheim, plus plotting and analysis in Python. There is no git repository and I don't want one.</p>
+          </figure>
+          <p>Answer its questions; if you are unsure, take its recommendation. When it asks to release the gate, say yes. Then run <code>/context</code>: <code>CLAUDE.md</code> and <code>.claude/rules/</code> should be listed under Memory files.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">6</span>
         <div class="step-body">
           <h3>Optional: Claude Code on your laptop</h3>
           <details class="more">
