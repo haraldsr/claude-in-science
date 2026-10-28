@@ -4,8 +4,9 @@ Static companion site for the CatTheory & CAMD workshop. No build step: everythi
 
 - `public/index.html` is the whole page (HTML, CSS and JS in one file).
 - `public/img/` holds the five figures used in the exercises.
-- `qr-code.svg` / `qr-code.png` point at the published page, for slides and handouts. They are
-  not part of the site.
+- `qr/` holds QR codes for the published page, for slides and handouts (not part of the site):
+  `qr-code` has a CO-on-a-surface icon in the centre, `qr-code-github` the GitHub mark.
+  `qr/make_qr.py` regenerates them; its docstring says how, and how to add another logo.
 
 The Claude Code harness the page tells people to install lives in `../Agentic_coding/`. If its
 bundle layout or install steps change, update the page's Setup section to match.
@@ -28,3 +29,7 @@ Each `<section class="section">` in `<main>` shows as its own page, picked by th
 (`#setup`, `#niflheim`, …); the masthead is the Home page. To add a page, add a section with an
 `id` and a matching link in the `.rail` nav; its order there sets the Previous/Next buttons.
 Without JavaScript the page falls back to one long scroll.
+
+The exercises page shows one exercise at a time. Its themes are the `.ex-theme` groups in
+`.ex-nav`; each link's `data-ex-link` names an `<article class="ex">`, and Previous/Next steps
+through the exercises in that order. To add one, add an article and a link in its theme.

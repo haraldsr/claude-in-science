@@ -308,7 +308,28 @@ main { display: block; }
 .mini-label { font-size: var(--step--1); font-weight: 700; color: var(--muted); margin-bottom: 6px; display: block; }
 
 /* ---------- Exercises ---------- */
-.exercises { display: grid; gap: 20px; }
+.exercises { display: grid; gap: 20px; min-width: 0; }
+/* Themes on the left, one exercise on the right; without JS every exercise is listed. */
+.ex-layout { display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr); }
+.ex-nav { display: grid; gap: 18px; align-content: start; }
+@media (min-width: 900px) {
+  .ex-layout { grid-template-columns: 260px minmax(0, 1fr); gap: 32px; align-items: start; }
+  .ex-nav { position: sticky; top: 64px; }
+}
+.ex-theme { display: grid; gap: 4px; }
+.ex-theme > small { color: var(--muted); font-size: var(--step--1); margin-bottom: 4px; }
+.ex-nav ul { list-style: none; padding: 0; display: grid; gap: 2px; }
+.ex-nav li { margin: 0; }
+.ex-nav a {
+  display: flex; gap: 10px; align-items: baseline; padding: 8px 10px; border-radius: 8px;
+  color: var(--ink); text-decoration: none; font-size: var(--step-0); line-height: 1.35;
+}
+.ex-nav a:hover { background: var(--surface); }
+.ex-nav a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.ex-n { font-family: var(--font-display); font-weight: 800; color: var(--accent); min-width: 1ch; }
+.ex-nav a.is-done .ex-n { color: var(--ok); }
+.ex-nav a.is-done::after { content: "✓"; margin-left: auto; color: var(--ok); font-weight: 700; }
+.views .exercises .ex:not(.is-shown) { display: none; }
 .ex {
   border: 1px solid var(--line); border-radius: var(--radius);
   padding: clamp(18px, 3vw, 28px); display: grid; gap: 18px;
@@ -328,7 +349,7 @@ main { display: block; }
 .done input { width: 16px; height: 16px; accent-color: var(--ok); margin: 0; }
 .ex.is-done .done { color: var(--ok); border-color: var(--ok); }
 .ex-grid { display: grid; gap: 20px 32px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 900px) { .ex-grid.has-aside { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
+@media (min-width: 1200px) { .ex-grid.has-aside { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); } }
 .ex-body { display: grid; gap: 14px; align-content: start; min-width: 0; }
 .ex-body > p { max-width: var(--read); }
 .ex h4 { font-size: var(--step-0); font-weight: 700; font-family: var(--font-display); }
@@ -650,138 +671,172 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
     <div class="section-head">
       <p class="eyebrow">Hands-on</p>
       <h2 id="ex-h">Exercises</h2>
-      <p>Work through all five exercises in order. Exercise 1 shows why everything after it works the way it does. Ticking an exercise off is saved in this browser only.</p>
+      <p>Work through all five in order, theme by theme. Exercise 1 shows why everything after it works the way it does. Ticking an exercise off is saved in this browser only.</p>
     </div>
 
-    <div class="exercises">
-
-      <article class="ex" id="ex1" data-ex="ex1">
-        <div class="ex-top">
-          <div class="ex-title">
-            <p class="eyebrow">Exercise 1</p>
-            <h3>Why context is important</h3>
-          </div>
-          <label class="done"><input type="checkbox" id="done-ex1" data-done="ex1"> Done</label>
+    <div class="ex-layout">
+      <nav class="ex-nav" aria-label="Exercises by theme">
+        <div class="ex-theme">
+          <p class="eyebrow">Using Claude well</p>
+          <small>Context, harness, sessions</small>
+          <ul>
+            <li><a href="#ex1" data-ex-link="ex1"><span class="ex-n">1</span>Why context is important</a></li>
+          </ul>
         </div>
-        <div class="ex-grid has-aside">
+        <div class="ex-theme">
+          <p class="eyebrow">Code &amp; calculations</p>
+          <small>Scripts, cluster jobs, data and plots</small>
+          <ul>
+            <li><a href="#ex2" data-ex-link="ex2"><span class="ex-n">2</span>Recreate an HER volcano</a></li>
+            <li><a href="#ex3" data-ex-link="ex3"><span class="ex-n">3</span>Turn an old plot into an interactive one</a></li>
+          </ul>
+        </div>
+        <div class="ex-theme">
+          <p class="eyebrow">Beyond code</p>
+          <small>Talks, design, web pages</small>
+          <ul>
+            <li><a href="#ex4" data-ex-link="ex4"><span class="ex-n">4</span>Turn a paper into a conference talk</a></li>
+          </ul>
+        </div>
+        <div class="ex-theme">
+          <p class="eyebrow">Keep learning</p>
+          <small>After the workshop</small>
+          <ul>
+            <li><a href="#ex5" data-ex-link="ex5"><span class="ex-n">5</span>Use Claude Academy</a></li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="exercises">
+
+        <article class="ex" id="ex1" data-ex="ex1">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">Exercise 1 · Using Claude well</p>
+              <h3>Why context is important</h3>
+            </div>
+            <label class="done"><input type="checkbox" id="done-ex1" data-done="ex1"> Done</label>
+          </div>
+          <div class="ex-grid has-aside">
+            <div class="ex-body">
+              <p>Run the same prompt twice: once in an empty folder, and once in your working root with the harness. Then compare and contrast the outputs.</p>
+              <figure class="prompt">
+                <div class="prompt-head"><span>Prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+                <p class="prompt-text">Make an fcc111 copper slab and relax it using a cheap calculator</p>
+              </figure>
+            </div>
+            <div class="ex-body">
+              <h4>Things to compare</h4>
+              <ul class="checklist">
+                <li>Which calculator it picked, and whether it said why</li>
+                <li>Slab size, vacuum and fixed layers</li>
+                <li>Where the files ended up, and how they are named</li>
+                <li>Whether it ran the job locally or submitted it</li>
+                <li>How full the context is afterwards (<code>/context</code>)</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="ex" id="ex2" data-ex="ex2">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">Exercise 2 · Code &amp; calculations</p>
+              <h3>Recreate an HER volcano</h3>
+            </div>
+            <label class="done"><input type="checkbox" id="done-ex2" data-done="ex2"> Done</label>
+          </div>
+          <div class="ex-grid has-aside">
+            <div class="ex-body">
+              <ul class="checklist">
+                <li>Use a cheap calculator: EMT, or GPAW in LCAO mode.</li>
+                <li>Try to also submit jobs on Niflheim (not too many!).</li>
+                <li>Be specific to Claude that you want the calculations redone, not values scraped from the image.</li>
+              </ul>
+              <figure class="prompt">
+                <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+                <p class="prompt-text">Recreate the HER volcano from Nørskov et al., J. Electrochem. Soc. 152, J23 (2005) by running the calculations yourself. Do not read values off the figure. Use EMT on fcc(111) slabs of Cu, Ag, Au, Ni, Pd and Pt, compute the hydrogen adsorption energy, convert it to ΔG_H*, and plot it against the experimental exchange currents from the paper. Submit at most 10 jobs to Niflheim. Make a plan first.</p>
+              </figure>
+              <h4>Hints</h4>
+              <ul class="checklist">
+                <li>EMT only covers Al, Cu, Ag, Au, Ni, Pd and Pt; H is supported but <a href="https://docs.ase-lib.org/ase/calculators/emt.html" target="_blank" rel="noopener">not well described</a>. Expect a rough volcano, then try <a href="https://gpaw.readthedocs.io/documentation/lcao/lcao.html" target="_blank" rel="noopener">GPAW LCAO</a> for a better one.</li>
+                <li>The paper uses ΔG_H* = ΔE_H + 0.24 eV.</li>
+                <li>This touches several files and jobs, so use plan mode (<kbd>Shift</kbd>+<kbd>Tab</kbd>).</li>
+              </ul>
+            </div>
+            <figure class="figure">
+              <img src="img/volcano.webp" alt="Volcano diagram of the HER for various metals: log exchange current against hydrogen adsorption free energy, with Pt, Pd and Rh near the top." width="498" height="401">
+              <figcaption>Target: HER volcano from <a href="https://doi.org/10.1149/1.1856988" target="_blank" rel="noopener">Nørskov et al., J. Electrochem. Soc. 152, J23 (2005)</a>.</figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <article class="ex" id="ex3" data-ex="ex3">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">Exercise 3 · Code &amp; calculations</p>
+              <h3>Turn an old plot into an interactive one</h3>
+            </div>
+            <label class="done"><input type="checkbox" id="done-ex3" data-done="ex3"> Done</label>
+          </div>
           <div class="ex-body">
-            <p>Run the same prompt twice: once in an empty folder, and once in your working root with the harness. Then compare and contrast the outputs.</p>
+            <p>Find an old plot and make it an interactive Plotly figure, or vibe code a small website for it. Give Claude the data or the script that made the plot, not a screenshot.</p>
+            <div class="ba">
+              <figure class="figure">
+                <img src="img/plot_before.webp" alt="Static matplotlib scatter of ΔE_CO* against ΔE_H* with labelled metals." width="596" height="528">
+                <figcaption>Before: static scatter of ΔE<sub>CO*</sub> vs ΔE<sub>H*</sub></figcaption>
+              </figure>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <figure class="figure">
+                <img src="img/plot_after.webp" alt="Interactive Plotly version of the same scatter with a hover box showing one material's details." width="900" height="754">
+                <figcaption>After: interactive Plotly, hover shows each material</figcaption>
+              </figure>
+            </div>
             <figure class="prompt">
-              <div class="prompt-head"><span>Prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <p class="prompt-text">Make an fcc111 copper slab and relax it using a cheap calculator</p>
+              <div class="prompt-head"><span>Example prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <p class="prompt-text">Here is the script and data behind an old figure of mine. Rebuild it as an interactive Plotly figure saved as a single HTML file. Keep the axes and labels, and show the material name, ID and energies on hover.</p>
             </figure>
+          </div>
+        </article>
+
+        <article class="ex" id="ex4" data-ex="ex4">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">Exercise 4 · Beyond code</p>
+              <h3>Turn a paper into a conference talk</h3>
+            </div>
+            <label class="done"><input type="checkbox" id="done-ex4" data-done="ex4"> Done</label>
           </div>
           <div class="ex-body">
-            <h4>Things to compare</h4>
-            <ul class="checklist">
-              <li>Which calculator it picked, and whether it said why</li>
-              <li>Slab size, vacuum and fixed layers</li>
-              <li>Where the files ended up, and how they are named</li>
-              <li>Whether it ran the job locally or submitted it</li>
-              <li>How full the context is afterwards (<code>/context</code>)</li>
-            </ul>
+            <p>Choose one of your own or a peer's papers and make it a conference presentation with Claude Design. Tell it the talk length and the audience, and ask for speaker notes.</p>
+            <div class="ba">
+              <figure class="figure">
+                <img src="img/paper_before.webp" alt="Article page of 'Exploring the vast landscape of stable materials for CO2RR' in Electrochimica Acta." width="900" height="701">
+                <figcaption>Before: the paper</figcaption>
+              </figure>
+              <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              <figure class="figure">
+                <img src="img/deck_after.webp" alt="Dark title slide of a deck made from the paper, with slide thumbnails on the left." width="1200" height="569">
+                <figcaption>After: a talk deck made from it</figcaption>
+              </figure>
+            </div>
+            <p class="or">Example: <a href="https://doi.org/10.1016/j.electacta.2025.148053" target="_blank" rel="noopener">Karlsson et al., Exploring the vast landscape of stable materials for CO<sub>2</sub>RR, Electrochim. Acta 549, 148053 (2026)</a>.</p>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <article class="ex" id="ex2" data-ex="ex2">
-        <div class="ex-top">
-          <div class="ex-title">
-            <p class="eyebrow">Exercise 2</p>
-            <h3>Recreate an HER volcano</h3>
+        <article class="ex" id="ex5" data-ex="ex5">
+          <div class="ex-top">
+            <div class="ex-title">
+              <p class="eyebrow">Exercise 5 · Keep learning</p>
+              <h3>Use Claude Academy</h3>
+            </div>
+            <label class="done"><input type="checkbox" id="done-ex5" data-done="ex5"> Done</label>
           </div>
-          <label class="done"><input type="checkbox" id="done-ex2" data-done="ex2"> Done</label>
-        </div>
-        <div class="ex-grid has-aside">
           <div class="ex-body">
-            <ul class="checklist">
-              <li>Use a cheap calculator: EMT, or GPAW in LCAO mode.</li>
-              <li>Try to also submit jobs on Niflheim (not too many!).</li>
-              <li>Be specific to Claude that you want the calculations redone, not values scraped from the image.</li>
-            </ul>
-            <figure class="prompt">
-              <div class="prompt-head"><span>Starter prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <p class="prompt-text">Recreate the HER volcano from Nørskov et al., J. Electrochem. Soc. 152, J23 (2005) by running the calculations yourself. Do not read values off the figure. Use EMT on fcc(111) slabs of Cu, Ag, Au, Ni, Pd and Pt, compute the hydrogen adsorption energy, convert it to ΔG_H*, and plot it against the experimental exchange currents from the paper. Submit at most 10 jobs to Niflheim. Make a plan first.</p>
-            </figure>
-            <h4>Hints</h4>
-            <ul class="checklist">
-              <li>EMT only covers Al, Cu, Ag, Au, Ni, Pd and Pt; H is supported but <a href="https://docs.ase-lib.org/ase/calculators/emt.html" target="_blank" rel="noopener">not well described</a>. Expect a rough volcano, then try <a href="https://gpaw.readthedocs.io/documentation/lcao/lcao.html" target="_blank" rel="noopener">GPAW LCAO</a> for a better one.</li>
-              <li>The paper uses ΔG_H* = ΔE_H + 0.24 eV.</li>
-              <li>This touches several files and jobs, so use plan mode (<kbd>Shift</kbd>+<kbd>Tab</kbd>).</li>
-            </ul>
+            <p>Free, self-paced courses from Anthropic. Good starting points are <a href="https://academy.claude.com/courses/claude-code-101" target="_blank" rel="noopener">Claude Code 101</a> and <a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a>. All courses: <a href="https://academy.claude.com/courses" target="_blank" rel="noopener">academy.claude.com/courses</a>.</p>
           </div>
-          <figure class="figure">
-            <img src="img/volcano.webp" alt="Volcano diagram of the HER for various metals: log exchange current against hydrogen adsorption free energy, with Pt, Pd and Rh near the top." width="498" height="401">
-            <figcaption>Target: HER volcano from <a href="https://doi.org/10.1149/1.1856988" target="_blank" rel="noopener">Nørskov et al., J. Electrochem. Soc. 152, J23 (2005)</a>.</figcaption>
-          </figure>
-        </div>
-      </article>
-
-      <article class="ex" id="ex3" data-ex="ex3">
-        <div class="ex-top">
-          <div class="ex-title">
-            <p class="eyebrow">Exercise 3</p>
-            <h3>Turn an old plot into an interactive one</h3>
-          </div>
-          <label class="done"><input type="checkbox" id="done-ex3" data-done="ex3"> Done</label>
-        </div>
-        <div class="ex-body">
-          <p>Find an old plot and make it an interactive Plotly figure, or vibe code a small website for it. Give Claude the data or the script that made the plot, not a screenshot.</p>
-          <div class="ba">
-            <figure class="figure">
-              <img src="img/plot_before.webp" alt="Static matplotlib scatter of ΔE_CO* against ΔE_H* with labelled metals." width="596" height="528">
-              <figcaption>Before: static scatter of ΔE<sub>CO*</sub> vs ΔE<sub>H*</sub></figcaption>
-            </figure>
-            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            <figure class="figure">
-              <img src="img/plot_after.webp" alt="Interactive Plotly version of the same scatter with a hover box showing one material's details." width="900" height="754">
-              <figcaption>After: interactive Plotly, hover shows each material</figcaption>
-            </figure>
-          </div>
-          <figure class="prompt">
-            <div class="prompt-head"><span>Example prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
-            <p class="prompt-text">Here is the script and data behind an old figure of mine. Rebuild it as an interactive Plotly figure saved as a single HTML file. Keep the axes and labels, and show the material name, ID and energies on hover.</p>
-          </figure>
-        </div>
-      </article>
-
-      <article class="ex" id="ex4" data-ex="ex4">
-        <div class="ex-top">
-          <div class="ex-title">
-            <p class="eyebrow">Exercise 4</p>
-            <h3>Turn a paper into a conference talk</h3>
-          </div>
-          <label class="done"><input type="checkbox" id="done-ex4" data-done="ex4"> Done</label>
-        </div>
-        <div class="ex-body">
-          <p>Choose one of your own or a peer's papers and make it a conference presentation with Claude Design. Tell it the talk length and the audience, and ask for speaker notes.</p>
-          <div class="ba">
-            <figure class="figure">
-              <img src="img/paper_before.webp" alt="Article page of 'Exploring the vast landscape of stable materials for CO2RR' in Electrochimica Acta." width="900" height="701">
-              <figcaption>Before: the paper</figcaption>
-            </figure>
-            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-            <figure class="figure">
-              <img src="img/deck_after.webp" alt="Dark title slide of a deck made from the paper, with slide thumbnails on the left." width="1200" height="569">
-              <figcaption>After: a talk deck made from it</figcaption>
-            </figure>
-          </div>
-          <p class="or">Example: <a href="https://doi.org/10.1016/j.electacta.2025.148053" target="_blank" rel="noopener">Karlsson et al., Exploring the vast landscape of stable materials for CO<sub>2</sub>RR, Electrochim. Acta 549, 148053 (2026)</a>.</p>
-        </div>
-      </article>
-
-      <article class="ex" id="ex5" data-ex="ex5">
-        <div class="ex-top">
-          <div class="ex-title">
-            <p class="eyebrow">Exercise 5</p>
-            <h3>Use Claude Academy</h3>
-          </div>
-          <label class="done"><input type="checkbox" id="done-ex5" data-done="ex5"> Done</label>
-        </div>
-        <div class="ex-body">
-          <p>Free, self-paced courses from Anthropic. Good starting points are <a href="https://academy.claude.com/courses/claude-code-101" target="_blank" rel="noopener">Claude Code 101</a> and <a href="https://academy.claude.com/courses/claude-code-in-action" target="_blank" rel="noopener">Claude Code in Action</a>. All courses: <a href="https://academy.claude.com/courses" target="_blank" rel="noopener">academy.claude.com/courses</a>.</p>
-        </div>
-      </article>
+        </article>
+      </div>
     </div>
   </section>
 
@@ -1391,7 +1446,11 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
   document.querySelectorAll("[data-done]").forEach(function (box) {
     var id = box.getAttribute("data-done");
     var card = box.closest(".ex");
-    function paint() { if (card) card.classList.toggle("is-done", box.checked); }
+    var link = document.querySelector('[data-ex-link="' + id + '"]');
+    function paint() {
+      if (card) card.classList.toggle("is-done", box.checked);
+      if (link) link.classList.toggle("is-done", box.checked);
+    }
     box.checked = !!done[id];
     paint();
     box.addEventListener("change", function () {
@@ -1446,37 +1505,63 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
   }
 
   /* ---------- Views: one section per page, picked by the URL hash ---------- */
+  /* The exercises page shows one exercise at a time; #ex2 opens it on exercise 2. */
   var root = document.documentElement;
   var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
   var order = links.map(function (a) { return a.getAttribute("href").slice(1); });
+  var exNav = document.querySelector(".ex-nav");
+  var exLinks = Array.prototype.slice.call(document.querySelectorAll("[data-ex-link]"));
+  var shownEx = exLinks[0].getAttribute("data-ex-link");
   var baseTitle = document.title;
   var pager = document.createElement("nav");
   pager.className = "pager";
   pager.setAttribute("aria-label", "Pages");
   document.querySelector("main").appendChild(pager);
 
-  function pagerLink(i, cls, label) {
-    if (i < 0 || i >= links.length) return "";
-    return '<a class="' + cls + '" href="#' + order[i] + '"><small>' + label + "</small>" + links[i].innerHTML + "</a>";
+  // Previous/Next order: the rail's pages, with the exercises page expanded into its exercises.
+  var steps = [];
+  links.forEach(function (a, i) {
+    if (order[i] !== "exercises") { steps.push({ id: order[i], html: a.innerHTML }); return; }
+    exLinks.forEach(function (e) {
+      var exId = e.getAttribute("data-ex-link");
+      steps.push({ id: exId, html: document.getElementById(exId).querySelector("h3").innerHTML });
+    });
+  });
+  var stepIds = steps.map(function (s) { return s.id; });
+
+  function pagerLink(k, cls, label) {
+    if (k < 0 || k >= steps.length) return "";
+    return '<a class="' + cls + '" href="#' + steps[k].id + '"><small>' + label + "</small>" + steps[k].html + "</a>";
   }
   function render() {
     var id = decodeURIComponent(location.hash.slice(1));
     var target = id ? document.getElementById(id) : null;
     var section = target && target.closest("main > .section");
+    var ex = target && target.closest(".ex");
     var view = section ? section.id : "top";
     var i = order.indexOf(view);
+    if (ex) shownEx = ex.id;
     root.classList.toggle("view-home", view === "top");
     document.querySelectorAll("main > .section").forEach(function (s) {
       s.classList.toggle("is-active", s.id === view);
     });
+    document.querySelectorAll(".ex").forEach(function (e) {
+      e.classList.toggle("is-shown", e.id === shownEx);
+    });
     links.forEach(function (a, j) {
       if (j === i) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
     });
-    pager.innerHTML = pagerLink(i - 1, "prev", "← Previous") + pagerLink(i + 1, "next", "Next →");
+    exLinks.forEach(function (a) {
+      if (a.getAttribute("data-ex-link") === shownEx) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current");
+    });
+    var k = stepIds.indexOf(view === "exercises" ? shownEx : view);
+    pager.innerHTML = pagerLink(k - 1, "prev", "← Previous") + pagerLink(k + 1, "next", "Next →");
     document.title = view === "top" ? baseTitle : links[i].textContent + " · " + baseTitle;
     var scroller = links[i].closest(".rail-scroll");
     scroller.scrollLeft = Math.max(0, links[i].offsetLeft - scroller.clientWidth / 2 + links[i].clientWidth / 2);
-    if (target && section && target !== section) target.scrollIntoView();
+    // A picked exercise goes to the top of the page, unless the theme list sits above it (narrow screens).
+    var stacked = ex && ex.getBoundingClientRect().top >= exNav.getBoundingClientRect().bottom;
+    if (target && section && target !== section && (target !== ex || stacked)) target.scrollIntoView();
     else window.scrollTo(0, 0);
   }
   window.addEventListener("hashchange", render);
