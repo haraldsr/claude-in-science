@@ -764,7 +764,7 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
               <li>A new window opens, connected to Niflheim (the host shows in the bottom-left corner). Its terminal (<kbd>Ctrl</kbd>+<kbd>`</kbd>) runs on Niflheim: use it for the commands in the next steps.</li>
             </ol>
           </div>
-          <p class="or"><code>slid</code> is one of several login nodes; others are <code>slid2</code>, <code>sylg</code>, <code>thul</code>, <code>vid</code> and <code>svol</code>. Log in to the one that matches the partition you will run on (see the <a href="#niflheim">login node table</a>).</p>
+          <p class="or"><code>slid</code> is one of several login nodes; others are <code>slid2</code>, <code>sylg</code>, <code>thul</code>, <code>vid</code> and <code>svol</code>. You can submit to any partition from any of them; if you compile code, use the one that matches its compute nodes (see the <a href="#niflheim">login node table</a>).</p>
         </div>
       </li>
 
@@ -1769,7 +1769,7 @@ Settings: reference/gpaw.md</code></pre>
       </div>
       <div class="fact">
         <h4>Login nodes are shared</h4>
-        <p>Processes are limited to 20 minutes of CPU time. Long tasks belong in batch jobs, never on the login node.</p>
+        <p>On most login nodes your processes are stopped after 20 minutes of CPU time; <code>slid</code> and <code>slid2</code> currently have no limit. Calculations still belong in batch jobs.</p>
       </div>
       <div class="fact">
         <h4>Test small first</h4>
@@ -1778,7 +1778,8 @@ Settings: reference/gpaw.md</code></pre>
     </div>
 
     <div class="sub">
-      <h3>Pick the login node that matches your partition</h3>
+      <h3>Login nodes and the partitions they match</h3>
+      <p>Every login node can submit to every partition. The docs recommend logging in to the node with the same hardware as the compute nodes you use, so code you compile there runs on them.</p>
       <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Login node</th><th scope="col">Partitions</th></tr></thead>
