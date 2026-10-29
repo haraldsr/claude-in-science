@@ -643,6 +643,7 @@ td code, td .mono { font-family: var(--font-mono); font-size: 0.84rem; }
 .cheat dt, .cheat dd { padding: 9px 0; border-bottom: 1px solid var(--line); margin: 0; font-size: var(--step-0); }
 .cheat dt { font-family: var(--font-mono); font-size: 0.84rem; color: var(--accent); font-weight: 600; overflow-wrap: anywhere; }
 .cheat dd { color: var(--ink); }
+.cheat .or { margin-top: 10px; }
 
 /* ---------- Links ---------- */
 .links { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
@@ -1887,6 +1888,20 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
           <dt>mq resubmit -i 5 -R 1:1m</dt><dd>Resubmit job 5 with new resources</dd>
           <dt>mq remove -s Fd -r .</dt><dd>Remove failed and done jobs here</dd>
         </dl>
+      </div>
+      <div class="cheat">
+        <h3>tmux</h3>
+        <dl>
+          <dt>tmux new -s claude</dt><dd>Start a session named claude, then run <code>claude</code> in it</dd>
+          <dt>Ctrl+B, D</dt><dd>Detach; Claude keeps running after you log out</dd>
+          <dt>tmux ls</dt><dd>List your sessions</dd>
+          <dt>tmux attach -t claude</dt><dd>Reattach</dd>
+          <dt>Ctrl+B, % · "</dt><dd>Split side by side · top and bottom</dd>
+          <dt>Ctrl+B, arrow</dt><dd>Move between panes</dd>
+          <dt>Ctrl+B, [</dt><dd>Scroll back; <kbd>q</kbd> to stop</dd>
+          <dt>tmux kill-session -t claude</dt><dd>End the session</dd>
+        </dl>
+        <p class="or">Ctrl+B, D means press Ctrl+B, let go, then press D. A session lives on the login node that started it, so ssh to that same node (e.g. <code>slid</code>) to reattach.</p>
       </div>
       </div>
     </div>
