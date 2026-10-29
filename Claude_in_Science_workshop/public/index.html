@@ -226,6 +226,13 @@ li + li { margin-top: 0.3em; }
 }
 .rail a:hover { color: var(--ink); }
 .rail a[aria-current] { color: var(--accent); border-bottom-color: var(--accent); }
+/* A grouped page's sub-pages show as a second row while you are in that group. */
+.rail-sub { display: none; border-top: 1px solid var(--line); }
+.views .rail-sub.is-open { display: block; }
+.rail-sub ul { gap: 6px; padding-block: 7px; }
+.rail-sub a { padding: 5px 13px; border: 0; border-radius: 999px; }
+.rail-sub a:hover { background: var(--surface); }
+.rail-sub a[aria-current] { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
 
 /* ---------- Sections ---------- */
 main { display: block; }
@@ -240,6 +247,8 @@ main { display: block; }
 
 /* ---------- Views: with JS, each section is its own page; without JS the page is one long scroll ---------- */
 .views main > .section:not(.is-active), .views main > .divider { display: none; }
+/* A page always starts at the top, so a direct link must not scroll it under the two-row rail. */
+.views main > .section { scroll-margin-top: 140px; }
 .views:not(.view-home) .masthead { display: none; }
 .pager { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: clamp(48px, 7vw, 80px); }
 .pager a {
@@ -702,20 +711,38 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
 <nav class="rail" aria-label="Sections">
   <div class="wrap">
     <div class="rail-scroll">
-      <ul>
+      <ul class="rail-main">
         <li><a href="#top">Home</a></li>
         <li><a href="#setup">Setup</a></li>
         <li><a href="#exercises">Exercises</a></li>
-        <li><a href="#context">Context</a></li>
-        <li><a href="#models">Models &amp; effort</a></li>
-        <li><a href="#sessions">Sessions</a></li>
-        <li><a href="#skills">Skills</a></li>
-        <li><a href="#harness">Harness</a></li>
+        <li><a href="#context" data-group="claude">Claude Code</a></li>
         <li><a href="#niflheim">Niflheim</a></li>
         <li><a href="#marimo">marimo</a></li>
-        <li><a href="#cheatsheet">Cheat sheet</a></li>
-        <li><a href="#links">Links</a></li>
+        <li><a href="#cheatsheet" data-group="reference">Reference</a></li>
       </ul>
+    </div>
+  </div>
+  <div class="rail-sub" data-sub="claude">
+    <div class="wrap">
+      <div class="rail-scroll">
+        <ul aria-label="Claude Code pages">
+          <li><a href="#context">Context</a></li>
+          <li><a href="#models">Models &amp; effort</a></li>
+          <li><a href="#sessions">Sessions</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#harness">Harness</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="rail-sub" data-sub="reference">
+    <div class="wrap">
+      <div class="rail-scroll">
+        <ul aria-label="Reference pages">
+          <li><a href="#cheatsheet">Cheat sheet</a></li>
+          <li><a href="#links">Links</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </nav>
@@ -2151,10 +2178,17 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
   }
 
   /* ---------- Views: one section per page, picked by the URL hash ---------- */
-  /* The exercises page shows one exercise at a time; #ex2 opens it on exercise 2. */
+  /* The exercises page shows one exercise at a time; #ex2 opens it on exercise 2.
+     A rail link with data-group stands for the pages in its .rail-sub row. */
   var root = document.documentElement;
-  var links = Array.prototype.slice.call(document.querySelectorAll(".rail a"));
-  var order = links.map(function (a) { return a.getAttribute("href").slice(1); });
+  var hrefId = function (a) { return a.getAttribute("href").slice(1); };
+  var pages = [];
+  document.querySelectorAll(".rail-main a").forEach(function (a) {
+    var sub = document.querySelector('.rail-sub[data-sub="' + a.getAttribute("data-group") + '"]');
+    if (!sub) { pages.push({ id: hrefId(a), top: a, link: a }); return; }
+    sub.querySelectorAll("a").forEach(function (s) { pages.push({ id: hrefId(s), top: a, link: s, sub: sub }); });
+  });
+  var order = pages.map(function (p) { return p.id; });
   var exNav = document.querySelector(".ex-nav");
   var exLinks = Array.prototype.slice.call(document.querySelectorAll("[data-ex-link]"));
   var shownEx = exLinks[0].getAttribute("data-ex-link");
@@ -2166,8 +2200,8 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
 
   // Previous/Next order: the rail's pages, with the exercises page expanded into its exercises.
   var steps = [];
-  links.forEach(function (a, i) {
-    if (order[i] !== "exercises") { steps.push({ id: order[i], html: a.innerHTML }); return; }
+  pages.forEach(function (p) {
+    if (p.id !== "exercises") { steps.push({ id: p.id, html: p.link.innerHTML }); return; }
     exLinks.forEach(function (e) {
       var exId = e.getAttribute("data-ex-link");
       steps.push({ id: exId, html: document.getElementById(exId).querySelector("h3").innerHTML });
@@ -2185,7 +2219,7 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
     var section = target && target.closest("main > .section");
     var ex = target && target.closest(".ex");
     var view = section ? section.id : "top";
-    var i = order.indexOf(view);
+    var page = pages[order.indexOf(view)];
     if (ex) shownEx = ex.id;
     root.classList.toggle("view-home", view === "top");
     document.querySelectorAll("main > .section").forEach(function (s) {
@@ -2194,17 +2228,22 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
     document.querySelectorAll(".ex").forEach(function (e) {
       e.classList.toggle("is-shown", e.id === shownEx);
     });
-    links.forEach(function (a, j) {
-      if (j === i) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+    document.querySelectorAll(".rail a").forEach(function (a) {
+      if (a === page.link) a.setAttribute("aria-current", "page");
+      else if (a === page.top) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
     });
+    document.querySelectorAll(".rail-sub").forEach(function (s) { s.classList.toggle("is-open", s === page.sub); });
     exLinks.forEach(function (a) {
       if (a.getAttribute("data-ex-link") === shownEx) a.setAttribute("aria-current", "step"); else a.removeAttribute("aria-current");
     });
     var k = stepIds.indexOf(view === "exercises" ? shownEx : view);
     pager.innerHTML = pagerLink(k - 1, "prev", "← Previous") + pagerLink(k + 1, "next", "Next →");
-    document.title = view === "top" ? baseTitle : links[i].textContent + " · " + baseTitle;
-    var scroller = links[i].closest(".rail-scroll");
-    scroller.scrollLeft = Math.max(0, links[i].offsetLeft - scroller.clientWidth / 2 + links[i].clientWidth / 2);
+    document.title = view === "top" ? baseTitle : page.link.textContent + " · " + baseTitle;
+    [page.top, page.link].forEach(function (a) {
+      var scroller = a.closest(".rail-scroll");
+      scroller.scrollLeft = Math.max(0, a.offsetLeft - scroller.clientWidth / 2 + a.clientWidth / 2);
+    });
     // A picked exercise goes to the top of the page, unless the theme list sits above it (narrow screens).
     var stacked = ex && ex.getBoundingClientRect().top >= exNav.getBoundingClientRect().bottom;
     if (target && section && target !== section && (target !== ex || stacked)) target.scrollIntoView();

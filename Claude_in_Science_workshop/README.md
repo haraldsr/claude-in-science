@@ -31,6 +31,8 @@ everything else is local. To preview, open the file in a browser.
 Each `<section class="section">` in `<main>` shows as its own page, picked by the URL hash
 (`#setup`, `#niflheim`, …); the masthead is the Home page. To add a page, add a section with an
 `id` and a matching link in the `.rail` nav; its order there sets the Previous/Next buttons.
+A rail link with `data-group="x"` stands for a group of pages: their links go in the
+`.rail-sub[data-sub="x"]` row, which shows under the rail while one of them is open.
 Without JavaScript the page falls back to one long scroll.
 
 The exercises page shows one exercise at a time. Its themes are the `.ex-theme` groups in
