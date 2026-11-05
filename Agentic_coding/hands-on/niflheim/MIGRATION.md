@@ -132,8 +132,9 @@ Worth knowing, because the behaviour differs from what the project is used to:
   (`/niflheim-docs`, tunable with `CLAUDE_DOCCHECK_DAYS`). Where the project's RUNBOOK claims
   differ from what that check finds upstream, the check wins — report it rather than quietly
   keeping the old text.
-- **Root confinement** also handles `~user`, `$VAR/…` and bare `..`, and is backed by
-  `permissions.blockReadsOutsideWorkingDirectories`.
+- **Root confinement** also handles `~user`, `$VAR/…` and bare `..`.
+  `permissions.blockReadsOutsideWorkingDirectories` is deliberately *not* set — it prompts on
+  every Bash command the parser cannot trace.
 - **Commands are skills**, all `disable-model-invocation: true` — zero context cost until
   invoked, and Claude can't trigger them on its own.
 - **Data-integrity constraints moved** out of `CLAUDE.md` into `.claude/rules/`. Same

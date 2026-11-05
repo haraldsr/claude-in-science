@@ -14,8 +14,8 @@ Confirm root confinement is actually in force, then report it in a few lines.
    `PreToolUse` hook matching `Bash|Read|Edit|Write|NotebookEdit|Glob|Grep`. If it is not
    wired, say so loudly — the hook file alone enforces nothing. Also confirm
    `permissions.blockReadsOutsideWorkingDirectories` is **absent**: it is deliberately not
-   used, because it turns every Bash command the shell parser cannot analyse into a permission
-   prompt. If someone has added it, say so.
+   used, because a Bash command the shell parser cannot trace prompts even in auto mode.
+   If someone has added it, say so.
 4. Live-test it: attempt `ls "$HOME"`. It MUST come back denied by the hook. If that
    command succeeds, confinement is BROKEN — report that as the headline.
 5. Report, in at most five lines:

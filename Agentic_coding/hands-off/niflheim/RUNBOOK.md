@@ -347,8 +347,8 @@ to a detached `git worktree` at a fixed commit instead of the live tree.
 Root confinement is not cluster-specific — it ships in both bundles and the README covers
 it. What matters here: `block_outside_root.sh` denies any tool call whose path resolves outside
 `$CLAUDE_PROJECT_DIR` — absolute, `~`, `~user`, `$HOME`, `$VAR/…` and `..` tokens alike —
-(`permissions.blockReadsOutsideWorkingDirectories` is deliberately NOT set — it turns every
-Bash command the shell parser cannot analyse into a permission prompt). On a shared cluster, `$HOME` and the group filesystem hold other projects and
+(`permissions.blockReadsOutsideWorkingDirectories` is deliberately NOT set — it prompts on
+every Bash command the shell parser cannot trace). On a shared cluster, `$HOME` and the group filesystem hold other projects and
 other people's data, and a recursive walk out there is slow on NFS as well as a privacy
 problem.
 

@@ -48,13 +48,14 @@ phantom=$(find "$ROOT/.claude/rules" -maxdepth 1 \( -name '*.template' -o -name 
 if [ -z "$phantom" ]; then ok "no templates or drafts parked in .claude/rules/"
 else bad "these load as live rules every session — move them out of .claude/rules/: $phantom"; fi
 # permissions.blockReadsOutsideWorkingDirectories looks like free safety and is not: with it on,
-# Claude Code statically parses every Bash command to check what it reads, and anything the
-# parser cannot analyse — a $VAR, a quoted string, a heredoc, a for-loop — escalates to a
-# permission prompt. In practice that is most real commands, and the flood trains people to
-# click through. block_outside_root.sh covers the same paths and stays silent unless it denies.
+# a Bash command the shell parser cannot trace — a second cd, a subshell — prompts even in auto
+# mode, even when it names no outside path (docs › settings-reference). The prompt is skipped
+# only where the sandbox enforces the block, which is exactly where this bundle cannot count on
+# the sandbox (Linux without bubblewrap). block_outside_root.sh covers the same paths and stays
+# silent unless it denies.
 if grep -q 'blockReadsOutsideWorkingDirectories' "$ROOT/.claude/settings.json" 2>/dev/null; then
-  bad "blockReadsOutsideWorkingDirectories is set — it turns every unparseable Bash command into a permission prompt; the root hook already covers this"
-else ok "no blockReadsOutsideWorkingDirectories (it prompts on every unparseable command)"; fi
+  bad "blockReadsOutsideWorkingDirectories is set — it prompts on every Bash command the parser cannot trace; the root hook already covers this"
+else ok "no blockReadsOutsideWorkingDirectories (it prompts on every untraceable command)"; fi
 
 echo "## block_destructive_git.sh"
 for c in 'git push --force origin main' 'git push -f origin main' 'git push origin main --force' \

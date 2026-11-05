@@ -54,7 +54,7 @@ same in all four and should stay so: a fix to one is copied to the other three. 
 enforces it; the bundles differ on purpose, and a check would have to know which differences
 are meant.
 
-Hands-off, two things to know:
+Hands-off, three things to know:
 
 - `/loop` runs on your machine and dies with the `claude` process. On a server that means a
   `tmux` session (`niflheim/RUNBOOK.md` › Login nodes). Routines (`/schedule`) run in the
@@ -63,6 +63,11 @@ Hands-off, two things to know:
 - The loop is the easy part. Its prompt needs a verification step and a stop condition, or it
   runs until the budget does. When the loop produces a bad result, fix the loop, not the
   result (`CLAUDE.md` › Loops).
+- Fix it from the transcript, not the commit message. Every run is saved whole at
+  `~/.claude/projects/<project>/<session-id>.jsonl` for 30 days (`cleanupPeriodDays`).
+  `/loop` sessions are hidden from the picker, but `claude --resume <session-id>` opens one
+  and `/export` writes it as text. A summary of a run loses exactly the detail that explains
+  the failure.
 
 ## Install
 
@@ -290,11 +295,12 @@ Be honest about the difference: with the sandbox, the kernel refuses. Without it
 fence — it stops the obvious routes out, but a path computed inside a script (`bash walk.sh`)
 is beyond what a lexical check can see. `/root-lock` reports which layer is actually in force.
 
-**Not** `permissions.blockReadsOutsideWorkingDirectories`. It looks like the same thing, but
-with it on Claude Code statically parses every Bash command, and anything the parser cannot
-analyse — a `$VAR`, a quoted string, a heredoc, a `for` loop — becomes a permission prompt.
-That is most real commands, and a flood of prompts teaches people to click through without
-reading. A test asserts it stays out.
+**Not** `permissions.blockReadsOutsideWorkingDirectories`. It looks like free safety, but
+the docs are explicit: with it on, a Bash command the shell parser cannot trace — a
+second `cd`, a subshell — prompts even in auto mode, even when it names no outside path. The
+prompt is skipped only where the sandbox enforces the block, which is exactly where this
+bundle cannot count on the sandbox. A flood of prompts teaches people to click through
+without reading. A test asserts it stays out.
 
 ## Keeping it current
 
@@ -316,12 +322,43 @@ every guide, this one included, dates. Sources, most authoritative first:
   for a sceptical second opinion on each change.
 - **The cluster docs** — <https://niflheim-users.readthedocs.io> for the Niflheim side.
 
+**Research**, dated. The pattern since early 2026: with each model generation the
+custom-scaffold premium shrinks — on Terminal-Bench 2.1 stock Claude Code with Fable 5 scores
+above the Terminus 2 scaffold on the same model — and what remains moves from prompt text into
+enforced configuration. So read these for lines to remove, not to add; a paper is a finding
+only if it changes a line here.
+
+- Claude Code docs › *What you can stop doing* (best-practices page, Oct 2026) — the advice
+  current models made unnecessary.
+- Anthropic, *Harness design for long-running application development* (24 Mar 2026) —
+  separate the evaluator from the generator and tune it sceptical; remove components one at
+  a time when a model ships.
+- Anthropic, *Effective harnesses for long-running agents* (26 Nov 2025) — initializer
+  session, feature list in JSON, progress file.
+- OpenAI, *Harness engineering* (11 Feb 2026) — a ~100-line `AGENTS.md` as a map; linter
+  errors that say how to fix; garbage-collection agents.
+- Gloaguen et al., *Evaluating AGENTS.md* (arXiv 2602.11988) — context files add >20% cost
+  and no success; only non-standard practice belongs in them.
+- Lee et al., *Meta-Harness* (arXiv 2603.28052) — automated harness search. The one change
+  that survived was an environment snapshot at session start; prompt and cleanup edits
+  regressed; raw traces beat summaries for improving a harness.
+- Lin et al., *Agentic Harness Engineering* (arXiv 2604.25850) — gains come from tools,
+  middleware and memory, not the system prompt.
+- Ben Sghaier et al., *Don't Blame the Large Language Model* (arXiv 2607.03691) — model
+  fixed, 35 harness releases: success swung 23–39% and every regression passed CI.
+- Barbaste et al., *Harness Engineering: a source-code study of eleven systems*
+  (arXiv 2609.00006) — "behavioral policy migrates from prompt prose to configuration";
+  safety rules as data, with a floor beneath YOLO mode.
+- Fan et al., *An Empirical Study of Harness Design for Coding Agents* (arXiv 2609.20804) —
+  context management mostly prevents overflow and matters less at 1M-token windows.
+
 `/harness-docs` does the check: it reads the first two, compares them with `CLAUDE.md`, the
 hooks, skills, agents and `settings.json`, and reports where this harness has drifted — a
 table and a proposed diff, no edits until you say so. It is deliberately **rare**: the
 `SessionStart` hook (`doc_check.sh`) nudges once a month (`CLAUDE_DOCCHECK_DAYS`, `0` to
-disable), the same cadence as the cluster-docs check. A harness that changes every week is
-one nobody can learn; run it off-cycle when a new model generation ships, since that is when
+disable), the same cadence as the cluster-docs check. The nudge is all that is automatic:
+the skill is `disable-model-invocation: true`, so Claude can say a check is due but only you
+can start it. A harness that changes every week is one nobody can learn; run it off-cycle when a new model generation ships, since that is when
 the guidance actually moves.
 
 ## Deliberately not included

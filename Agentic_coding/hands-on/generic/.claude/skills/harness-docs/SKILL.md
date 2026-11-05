@@ -18,6 +18,8 @@ opinion, the docs are the contract.
      `scheduled-tasks`, `checkpointing`, `permission-modes` (same site, `/docs/en/<page>`).
    - <https://www.anthropic.com/engineering> — the Claude Code best-practices article and any
      context-engineering post newer than the last check.
+   - The dated *Research* list under *Keeping it current* in the bundle README: anything
+     newer than the last check. A paper is a finding only if it changes a line here.
 2. For each claim this harness depends on, report `OK`, `CHANGED (was X, now Y)` or
    `COULD NOT VERIFY`, with the source URL:
    - **Hook events and their JSON** — `PreToolUse` `permissionDecision: deny`, `Stop` and

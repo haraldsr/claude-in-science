@@ -151,7 +151,8 @@ Each run is one iteration of a loop (`/maintain` is the shipped example). Start 
 the open items in `LESSONS.md` so blocked work is not redone; make one verified change;
 commit; write down what you learned; stop. A loop has a verification step and a stop
 condition, or it isn't one. When a loop produces a bad result, fix the loop — its prompt or
-skill — not just the result.
+skill — not just the result, and fix it from the run's transcript (`claude --resume
+<session-id>`), not from the commit message.
 
 ### Git
 
@@ -177,6 +178,8 @@ before it reaches me. A subagent runs under the same limits — parallelism, not
 
 - Scratch scripts, temp files and debug images live in `scratch/` and are deleted when the
   task is done, not in a future cleanup pass. Genuinely reusable → say so and keep it.
+- Never delete a file you did not create to satisfy a gate or a cleanup rule — not to clear
+  the untracked-file gate, not in a sweep. Say so, leave it, record it as open.
 - Dedicated cleanup sweeps are pre-authorized — orphaned scripts, superseded run directories,
   stale generated files — confirm the scope once rather than file by file.
 - Push back on growth unprompted: if a directory or the docs stack is visibly ballooning,

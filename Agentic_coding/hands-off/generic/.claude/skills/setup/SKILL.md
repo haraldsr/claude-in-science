@@ -98,8 +98,9 @@ are for.
 - `bash .claude/hooks/test_hooks.sh` — every line must PASS. If any fails, **stop**: report it
   and do not release the gate. The rules in `CLAUDE.md` assume these guards work.
 - Confirm `.gitignore` covers `scratch/`, `.claude/settings.local.json`, `CLAUDE.local.md`.
-- Ask whether auto-push should be on (`CLAUDE_AUTO_PUSH=1` in `.claude/settings.local.json`);
-  default is off.
+- Push is on (`CLAUDE_AUTO_PUSH=1` in `settings.json`); confirm the remote exists. To keep
+  one machine local-only, set `CLAUDE_AUTO_PUSH=0` in `.claude/settings.local.json` (see the
+  `.example`).
 
 ## 6. Release
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# SessionStart hook: now and then, remind Claude that the documentation this harness depends
-# on should be re-read and the harness checked against it. Two checks, one stamp each, both
-# every CLAUDE_DOCCHECK_DAYS (30):
+# SessionStart hook: now and then, have Claude tell the user that the documentation this
+# harness depends on is due to be re-read and the harness checked against it. The skills are
+# disable-model-invocation, so Claude can only relay the nudge — the user runs them. Two
+# checks, one stamp each, both every CLAUDE_DOCCHECK_DAYS (30):
 #   /harness-docs   Claude Code best practices and changelog, against CLAUDE.md, the hooks,
 #                   skills, agents and settings.json
 #   /niflheim-docs  the cluster docs, against RUNBOOK.md — only where that skill is installed
@@ -41,6 +42,6 @@ check harness-docs claude_harness_doccheck \
 [ -z "$due" ] && exit 0
 
 jq -n --arg m "Docs check due:$due
-When there is a natural pause this session, run the skill(s) above. Don't interrupt work in progress for it, and don't run it silently in the background." \
+At a natural pause this session, tell the user the check is due and name the skill — it is disable-model-invocation, so only they can start it. Don't interrupt work in progress for it." \
   '{hookSpecificOutput:{hookEventName:"SessionStart",additionalContext:$m}}'
 exit 0
