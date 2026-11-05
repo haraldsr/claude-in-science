@@ -515,6 +515,12 @@ svg .lim-t { fill: var(--muted); font: 500 11.5px var(--font-body); }
   padding: 14px 18px; font-size: var(--step-0);
 }
 .callout b { font-family: var(--font-display); }
+.warn {
+  display: grid; gap: 6px; max-width: var(--read); justify-self: stretch;
+  background: var(--chat-soft); border-left: 3px solid var(--chat); border-radius: var(--radius);
+  padding: 12px 16px;
+}
+.warn h4 { font-family: var(--font-display); font-size: var(--step-0); font-weight: 700; color: var(--chat); }
 
 .diag { display: grid; gap: 12px; }
 .diag-split { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
@@ -790,6 +796,11 @@ footer .wrap { padding-block: 28px 40px; display: grid; gap: 6px; color: var(--m
               <li>Open the Command Palette (<kbd>Cmd</kbd>/<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>), run <b>Remote-SSH: Connect to Host…</b> and enter <code>username@slid.fysik.dtu.dk</code>.</li>
               <li>A new window opens, connected to Niflheim (the host shows in the bottom-left corner). Its terminal (<kbd>Ctrl</kbd>+<kbd>`</kbd>) runs on Niflheim: use it for the commands in the next steps.</li>
             </ol>
+            <div class="warn">
+              <h4>Heads-up: VS Code can use up your threads on the login node</h4>
+              <p>Each login node caps how many processes and threads you may run there (<code>ulimit -u</code>). The VS Code server and its extensions are usually the biggest user, and with Claude Code on top it is common to hit the cap. Then nothing new can start for you on that node: Claude's commands fail with <i>Exit code 1</i> and no output, Python aborts, and the window can freeze or disconnect.</p>
+              <p>If it happens, close the VS Code window and reconnect, or switch to the Terminal route, which leaves the most room. <code>ps -u $USER -o nlwp,comm --sort=-nlwp | head</code> shows what is using your threads.</p>
+            </div>
           </div>
           <p class="or"><code>slid</code> is one of several login nodes; others are <code>slid2</code>, <code>sylg</code>, <code>thul</code>, <code>vid</code> and <code>svol</code>. You can submit to any partition from any of them; if you compile code, use the one that matches its compute nodes (see the <a href="#niflheim">login node table</a>).</p>
         </div>
@@ -859,21 +870,36 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
       <li class="step">
         <span class="step-n" aria-hidden="true">5</span>
         <div class="step-body">
-          <h3>Set up the harness with <code>/setup</code></h3>
-          <p>A fresh harness is locked: until <code>/setup</code> has finished, Claude can look around but cannot edit files or run commands, so do this before any exercise. <code>/setup</code> asks you about the project, writes what it learns into <code>.claude/rules/project.md</code> and the project section of <code>RUNBOOK.md</code>, checks the guards, and then unlocks.</p>
+          <h3>Start Claude</h3>
           <div class="route-block only-terminal">
             <span class="route-tag">Terminal</span>
-            <p>Start Claude in your working root:</p>
+            <p>First start <code>tmux</code> (recommended). It keeps your session running on Niflheim when the connection drops or you close your laptop, and you pick it up exactly where you left it.</p>
             <div class="code">
               <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
-              <pre><code>cd ~/my-project &amp;&amp; claude</code></pre>
+              <pre><code>tmux</code></pre>
             </div>
+            <p>Then, in the tmux window, go to your working root and type <code>claude</code>:</p>
+            <div class="code">
+              <div class="code-head"><span>bash</span><button class="copy" type="button" data-copy>Copy</button></div>
+              <pre><code>cd ~/my-project
+claude</code></pre>
+            </div>
+            <p class="or">Back after a disconnect? ssh to the same login node and run <code>tmux attach</code>. Name your sessions to keep several running on the same node, say one per exercise: <code>tmux new -s ex2</code>, later <code>tmux attach -t ex2</code>, and <code>tmux ls</code> lists them. More in the <a href="#cheatsheet">cheat sheet</a>.</p>
           </div>
           <div class="route-block only-vscode">
             <span class="route-tag">VS Code</span>
             <p>Open <code>~/my-project</code> as the folder (<b>File › Open Folder…</b>) and start Claude from <b>✻ Claude Code</b> in the status bar.</p>
           </div>
-          <p>Then send this. We assume no git: your working root is a plain folder, not a git repository, so the prompt says so up front. The harness's auto-commit and stray-file hooks need git and switch themselves off without it.</p>
+          <p>Claude opens with a prompt box where you type to it. The first time, it asks you to sign in (see step 2). To quit, type <code>/exit</code>.</p>
+        </div>
+      </li>
+
+      <li class="step">
+        <span class="step-n" aria-hidden="true">6</span>
+        <div class="step-body">
+          <h3>Set up the harness with <code>/setup</code></h3>
+          <p>A fresh harness is locked: until <code>/setup</code> has finished, Claude can look around but cannot edit files or run commands, so do this before any exercise. <code>/setup</code> asks you about the project, writes what it learns into <code>.claude/rules/project.md</code> and the project section of <code>RUNBOOK.md</code>, checks the guards, and then unlocks.</p>
+          <p>Send this to Claude. We assume no git: your working root is a plain folder, not a git repository, so the prompt says so up front. The harness's auto-commit and stray-file hooks need git and switch themselves off without it.</p>
           <figure class="prompt">
             <div class="prompt-head"><span>Prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
             <p class="prompt-text">/setup This is a new, empty folder for the Claude in Science workshop exercises: calculations with ASE and GPAW submitted to Niflheim, plus plotting and analysis in Python. There is no git repository and I don't want one.</p>
@@ -883,7 +909,7 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
       </li>
 
       <li class="step">
-        <span class="step-n" aria-hidden="true">6</span>
+        <span class="step-n" aria-hidden="true">7</span>
         <div class="step-body">
           <h3>Optional: Claude Code on your laptop</h3>
           <details class="more">
@@ -996,20 +1022,21 @@ cp -R /home/cat/harsk/Claude/hands-on/niflheim/. ~/my-project/</code></pre>
           </div>
           <div class="ex-grid has-aside">
             <div class="ex-body">
-              <p>Run the same prompt twice: once in an empty folder, and once in your working root with the harness. Then compare and contrast the outputs.</p>
+              <p>Run this prompt in your working root, where you set up the harness. The prompt is short on purpose: everything it leaves out, Claude has to take from its context (the harness's <code>CLAUDE.md</code>, rules and hooks, and what <code>/setup</code> learned about your project).</p>
               <figure class="prompt">
                 <div class="prompt-head"><span>Prompt</span><button class="copy" type="button" data-copy>Copy</button></div>
                 <p class="prompt-text">Make an fcc111 copper slab and relax it using a cheap calculator</p>
               </figure>
             </div>
             <div class="ex-body">
-              <h4>Things to compare</h4>
+              <h4>Things to look at</h4>
               <ul class="checklist">
                 <li>Which calculator it picked, and whether it said why</li>
                 <li>Slab size, vacuum and fixed layers</li>
                 <li>Where the files ended up, and how they are named</li>
-                <li>Whether it ran the job locally or submitted it</li>
+                <li>Whether it ran the relaxation on the login node or submitted it as a job</li>
                 <li>How full the context is afterwards (<code>/context</code>)</li>
+                <li>Ask it which instructions made it choose each of these</li>
               </ul>
             </div>
           </div>
@@ -1543,7 +1570,7 @@ Settings: reference/gpaw.md</code></pre>
                   <li class="it"><button type="button" class="tok k-hook" data-item>node_facts</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>node_facts</h5><p>Reads this login node's limits live (threads, CPU time, partitions), so they are never written down wrong.</p></div></li>
                   <li class="it"><button type="button" class="tok k-hook" data-item>slurm_alloc</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>slurm_alloc</h5><p>Adds the partition state and points to the submit template in RUNBOOK.md.</p></div></li>
                   <li class="it"><button type="button" class="tok k-hook" data-item>setup_gate</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>setup_gate</h5><p>If <code>/setup</code> hasn't run yet, says so before any work starts.</p></div></li>
-                  <li class="it"><button type="button" class="tok k-hook" data-item>doc_check</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>doc_check</h5><p>About once a month, reminds Claude to re-check the harness against the latest docs.</p></div></li>
+                  <li class="it"><button type="button" class="tok k-hook" data-item>doc_check</button><div class="detail"><p class="d-kind k-hook">Hook, runs automatically</p><h5>doc_check</h5><p>About once a month, has Claude tell you that a docs check is due and which skill runs it. Only you can start it.</p></div></li>
                 </ul>
               </li>
               <li class="lane">
@@ -1664,7 +1691,7 @@ Settings: reference/gpaw.md</code></pre>
               <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/></svg><span class="tile-name">/setup</span></button>
                 <div class="detail">
                   <div class="d-head"><svg class="ic big" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/><path d="M12 15v2"/></svg><div><h5>/setup</h5><p>Maps out the project, checks the guards, then removes the gate.</p></div></div>
-                  <p class="d-why"><b>Use it:</b> Once, right after copying the harness (Setup, step 5).</p>
+                  <p class="d-why"><b>Use it:</b> Once, right after copying the harness (Setup, step 6).</p>
                 </div></li>
               <li class="it"><button type="button" class="tile" data-item><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01M12 7h4M12 17h4"/></svg><span class="tile-name">/sbatch-run</span></button>
                 <div class="detail">
@@ -1753,6 +1780,7 @@ Settings: reference/gpaw.md</code></pre>
                 <tr><td><b>Permissions</b></td><td>Asks before anything not pre-allowed</td><td>Auto mode: safe actions go ahead; the hooks still deny destructive ones</td></tr>
                 <tr><td><b>A decision only you can make</b></td><td>Claude asks and waits</td><td>Written as an open item in LESSONS.md; Claude carries on with what doesn't depend on it</td></tr>
                 <tr><td><b>Evidence</b></td><td>Shown to you each turn</td><td>In the commit message</td></tr>
+                <tr><td><b>When a run goes wrong</b></td><td>You saw it happen</td><td>Debug it from the run's full transcript (<code>claude --resume &lt;session-id&gt;</code>), not the commit message</td></tr>
                 <tr><td><b>Commit</b></td><td>After the stray-file gate</td><td>Only once your test command passes too (<code>stop_verify_gate</code>)</td></tr>
                 <tr><td><b>Push</b></td><td>Off unless you turn it on</td><td>After every commit</td></tr>
                 <tr><td><b>Loops</b></td><td>—</td><td><code>/maintain</code>: one verified fix per run, e.g. <code>/loop 1d /maintain</code></td></tr>
@@ -1920,14 +1948,16 @@ marimo convert old.ipynb &gt; notebook.py</code></pre>
       <div class="cheat">
         <h3>tmux</h3>
         <dl>
-          <dt>tmux new -s claude</dt><dd>Start a session named claude, then run <code>claude</code> in it</dd>
+          <dt>tmux</dt><dd>Start a session, then run <code>claude</code> in it</dd>
+          <dt>tmux new -s ex2</dt><dd>Start a session named ex2; named sessions let you run several on one node</dd>
           <dt>Ctrl+B, D</dt><dd>Detach; Claude keeps running after you log out</dd>
           <dt>tmux ls</dt><dd>List your sessions</dd>
-          <dt>tmux attach -t claude</dt><dd>Reattach</dd>
+          <dt>tmux attach</dt><dd>Reattach to the last session</dd>
+          <dt>tmux attach -t ex2</dt><dd>Reattach to a named session</dd>
           <dt>Ctrl+B, % · "</dt><dd>Split side by side · top and bottom</dd>
           <dt>Ctrl+B, arrow</dt><dd>Move between panes</dd>
           <dt>Ctrl+B, [</dt><dd>Scroll back; <kbd>q</kbd> to stop</dd>
-          <dt>tmux kill-session -t claude</dt><dd>End the session</dd>
+          <dt>tmux kill-session -t ex2</dt><dd>End a session</dd>
         </dl>
         <p class="or">Ctrl+B, D means press Ctrl+B, let go, then press D. A session lives on the login node that started it, so ssh to that same node (e.g. <code>slid</code>) to reattach.</p>
       </div>
